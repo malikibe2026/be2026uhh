@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BANCI EKONOMI — UNIT HARGA-HARGA 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0B1120;--ink2:#111827;--ink3:#1A2540;
+  --card:#151E30;--card2:#1C2842;--card3:#203050;
+  --rim:#233055;--rim2:#2E3F68;
+  --h:#3B82F6;--hg:rgba(59,130,246,.18);
+  --r:#10B981;--rg:rgba(16,185,129,.15);
+  --f2:#8B5CF6;--f2g:rgba(139,92,246,.15);
+  --f3:#F59E0B;--f3g:rgba(245,158,11,.12);
+  --acc:#38BDF8;--accg:rgba(56,189,248,.15);
+  --txt:#E2E8F0;--txt2:#94A3B8;--txt3:#4A6080;
+  --red:#F87171;--gold:#FBBF24;
+  --sans:'Plus Jakarta Sans',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--ink);color:var(--txt);min-height:100vh;overflow-x:hidden}
+
+/* ── TOPBAR ── */
+.topbar{
+  position:sticky;top:0;z-index:200;
+  background:rgba(11,17,32,.92);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--rim);
+  padding:14px 24px 0;
+}
+.topbar-row1{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.logo{
+  width:36px;height:36px;border-radius:10px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--h),var(--f2));
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:12px;font-weight:600;color:#fff;letter-spacing:.04em;
+}
+.topbar-titles{flex:1;min-width:0}
+.topbar-main{font-size:13px;font-weight:700;color:var(--txt);letter-spacing:.02em;line-height:1.3}
+.topbar-sub{font-size:10px;color:var(--txt2);font-family:var(--mono);letter-spacing:.06em;margin-top:2px}
+.tabs{display:flex;gap:2px;overflow-x:auto;padding-bottom:0}
+.tabs::-webkit-scrollbar{height:0}
+.tab{
+  white-space:nowrap;padding:8px 16px;font-size:12px;font-weight:500;
+  border:none;background:transparent;color:var(--txt2);cursor:pointer;
+  border-bottom:2px solid transparent;transition:all .2s;border-radius:6px 6px 0 0;
+}
+.tab:hover{color:var(--txt);background:var(--card2)}
+.tab.active{color:var(--acc);border-bottom-color:var(--acc);background:transparent;font-weight:600}
+
+/* ── LAYOUT ── */
+.page{display:none;padding:20px 22px;max-width:1600px;margin:0 auto}
+.page.active{display:block}
+
+/* ── KPI ── */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin-bottom:18px}
+.kpi{
+  background:var(--card);border:1px solid var(--rim);border-radius:12px;
+  padding:14px 16px;position:relative;overflow:hidden;transition:transform .2s,border-color .2s;
+}
+.kpi:hover{transform:translateY(-2px);border-color:var(--rim2)}
+.kpi::after{content:'';position:absolute;inset:0;pointer-events:none;opacity:.07}
+.kpi.c-h::after{background:radial-gradient(circle at top right,var(--h),transparent 65%)}
+.kpi.c-r::after{background:radial-gradient(circle at top right,var(--r),transparent 65%)}
+.kpi.c-f2::after{background:radial-gradient(circle at top right,var(--f2),transparent 65%)}
+.kpi.c-f3::after{background:radial-gradient(circle at top right,var(--f3),transparent 65%)}
+.kpi.c-acc::after{background:radial-gradient(circle at top right,var(--acc),transparent 65%)}
+.kpi-lbl{font-size:10px;color:var(--txt2);font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px}
+.kpi-val{font-size:28px;font-weight:800;font-family:var(--mono);line-height:1}
+.kpi-val.c-h{color:var(--h)}.kpi-val.c-r{color:var(--r)}.kpi-val.c-f2{color:var(--f2)}.kpi-val.c-f3{color:var(--f3)}.kpi-val.c-acc{color:var(--acc)}.kpi-val.white{color:var(--txt)}
+.kpi-sub{font-size:10px;color:var(--txt3);margin-top:5px}
+
+/* ── GRID ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+.g21{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px}
+.g12{display:grid;grid-template-columns:1fr 2fr;gap:14px;margin-bottom:14px}
+@media(max-width:900px){.g2,.g3,.g21,.g12{grid-template-columns:1fr}}
+
+/* ── CARD ── */
+.c{background:var(--card);border:1px solid var(--rim);border-radius:12px;padding:16px;margin-bottom:14px}
+.c-title{font-size:11px;font-weight:700;color:var(--txt2);letter-spacing:.07em;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+.c-title span{display:flex;align-items:center;gap:8px}
+.c-title span::before{content:'';display:block;width:3px;height:14px;border-radius:2px;background:var(--acc)}
+.ch{position:relative}
+.ch-sm{height:180px}.ch-md{height:230px}.ch-lg{height:280px}.ch-xl{height:320px}
+.ch canvas{position:absolute;inset:0;width:100%!important;height:100%!important}
+
+/* ── DRILL-DOWN ── */
+.bc{display:flex;align-items:center;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.bc-item{
+  font-size:11px;padding:4px 12px;border-radius:20px;
+  border:1px solid var(--rim2);color:var(--txt2);cursor:pointer;transition:all .15s;
+}
+.bc-item:hover{color:var(--acc);border-color:var(--acc)}
+.bc-item.cur{background:var(--card2);color:var(--txt);cursor:default;border-color:var(--rim2)}
+.bc-sep{color:var(--txt3);font-size:12px}
+.drill-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-bottom:16px}
+.dc{
+  background:var(--card2);border:1px solid var(--rim);border-radius:10px;
+  padding:14px;cursor:pointer;transition:all .18s;position:relative;overflow:hidden;
+}
+.dc:hover{border-color:var(--rim2);transform:translateY(-2px)}
+.dc::after{content:'›';position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--txt3);font-size:18px;transition:all .15s}
+.dc:hover::after{right:8px;color:var(--acc)}
+.dc-lbl{font-size:10px;color:var(--txt2);font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px}
+.dc-val{font-size:22px;font-weight:700;font-family:var(--mono)}
+.dc-sub{font-size:10px;color:var(--txt3);margin-top:4px}
+.dc-bar{height:3px;background:var(--rim);border-radius:2px;margin-top:10px;overflow:hidden}
+.dc-bar-fill{height:100%;border-radius:2px;transition:width .5s ease}
+.back-btn{
+  display:inline-flex;align-items:center;gap:6px;margin-bottom:12px;
+  font-size:11px;color:var(--txt2);cursor:pointer;padding:5px 12px;
+  border:1px solid var(--rim2);border-radius:6px;transition:all .15s;
+}
+.back-btn:hover{color:var(--acc);border-color:var(--acc)}
+.fe-list{max-height:300px;overflow-y:auto}
+.fe-row{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:7px;margin-bottom:3px;background:var(--ink3);border:1px solid transparent;transition:border-color .12s}
+.fe-row:hover{border-color:var(--rim2)}
+.fe-rank{font-size:10px;color:var(--txt3);font-family:var(--mono);width:18px}
+.fe-id{font-size:11px;font-weight:500;flex:1}
+.fe-ct{font-size:10px;color:var(--txt2);font-family:var(--mono)}
+.drill-level-title{font-size:12px;font-weight:600;color:var(--txt2);letter-spacing:.04em;margin-bottom:10px}
+
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--rim)}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead th{
+  background:var(--ink3);padding:9px 12px;text-align:left;
+  font-size:10px;font-weight:700;color:var(--txt2);letter-spacing:.06em;text-transform:uppercase;
+  white-space:nowrap;border-bottom:1px solid var(--rim);cursor:pointer;user-select:none;
+}
+thead th:hover{color:var(--acc)}
+thead th.sorted{color:var(--acc)}
+tbody tr{border-bottom:1px solid var(--rim);transition:background .1s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--card2)}
+tbody td{padding:8px 12px;color:var(--txt)}
+.mono{font-family:var(--mono);font-size:11px}
+.center{text-align:center}
+.rb{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--ink3);font-size:10px;font-weight:700;font-family:var(--mono)}
+.rb.g{background:var(--gold);color:#000}.rb.s{background:#CBD5E1;color:#000}.rb.b{background:#92400E;color:#fff}
+.tag{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:12px;letter-spacing:.03em}
+.tag.h{background:rgba(59,130,246,.15);color:var(--h);border:1px solid rgba(59,130,246,.3)}
+.tag.r{background:rgba(16,185,129,.12);color:var(--r);border:1px solid rgba(16,185,129,.3)}
+.tag.f2{background:rgba(139,92,246,.15);color:#A78BFA;border:1px solid rgba(139,92,246,.3)}
+.tag.f3{background:rgba(245,158,11,.12);color:var(--f3);border:1px solid rgba(245,158,11,.3)}
+.rev-bar{display:flex;align-items:center;gap:8px}
+.rev-track{flex:1;height:4px;background:var(--rim);border-radius:2px;min-width:50px}
+.rev-fill{height:4px;border-radius:2px}
+
+/* ── FILTER BAR ── */
+.fbar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+.finput{
+  flex:1;min-width:180px;padding:7px 12px;
+  background:var(--card);border:1px solid var(--rim2);border-radius:7px;
+  color:var(--txt);font-size:12px;font-family:var(--sans);outline:none;transition:border-color .15s;
+}
+.finput:focus{border-color:var(--acc)}
+.fsel{
+  padding:7px 12px;background:var(--card);border:1px solid var(--rim2);
+  border-radius:7px;color:var(--txt);font-size:12px;font-family:var(--sans);outline:none;cursor:pointer;
+}
+.fsel option{background:var(--card)}
+.fct{font-size:10px;color:var(--txt3);font-family:var(--mono);white-space:nowrap}
+.exp-btn{
+  padding:7px 14px;background:var(--card2);border:1px solid var(--rim2);
+  border-radius:7px;font-size:11px;font-weight:600;color:var(--txt2);cursor:pointer;transition:all .15s;
+}
+.exp-btn:hover{color:var(--acc);border-color:var(--acc)}
+
+/* ── TOGGLE ── */
+.tgl{display:flex;border:1px solid var(--rim2);border-radius:8px;overflow:hidden;margin-bottom:12px;width:fit-content}
+.tgl-btn{padding:6px 14px;font-size:11px;font-weight:600;border:none;background:transparent;color:var(--txt2);cursor:pointer;transition:all .15s}
+.tgl-btn.active{background:var(--card2);color:var(--txt)}
+
+/* ── MSIC ── */
+.msic-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;margin-bottom:4px;background:var(--ink3)}
+.msic-kod{font-size:11px;font-family:var(--mono);color:var(--acc);font-weight:600;width:44px;flex-shrink:0}
+.msic-ket{font-size:11px;color:var(--txt);flex:1;line-height:1.4}
+.msic-ct{font-size:11px;font-family:var(--mono);color:var(--txt2);white-space:nowrap}
+.msic-bar{width:80px;height:4px;background:var(--rim);border-radius:2px;flex-shrink:0;overflow:hidden}
+.msic-bar-fill{height:4px;border-radius:2px}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--ink2)}
+::-webkit-scrollbar-thumb{background:var(--rim2);border-radius:3px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-row1">
+    <div class="logo">BE</div>
+    <div class="topbar-titles">
+      <div class="topbar-main">OVERVIEW KESELURUHAN BANCI EKONOMI FASA 2 & 3 — UNIT HARGA-HARGA 2026</div>
+      <div class="topbar-sub">NEGERI SELANGOR &nbsp;·&nbsp; 31,491 REKOD &nbsp;·&nbsp; 2 SUBSEKTOR &nbsp;·&nbsp; 3 PENYELIA &nbsp;·&nbsp; 35 ID FE</div>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="goTab('overview',this)">📊 Overview</button>
+    <button class="tab" onclick="goTab('drilldown',this)">🔍 Drill-Down</button>
+    <button class="tab" onclick="goTab('daerah',this)">🗺️ Daerah</button>
+    <button class="tab" onclick="goTab('ssm',this)">📋 Jenis SSM</button>
+    <button class="tab" onclick="goTab('saiz',this)">🏗️ Saiz Syarikat</button>
+    <button class="tab" onclick="goTab('msic',this)">📂 MSIC 2025</button>
+    <button class="tab" onclick="goTab('revenue',this)">💰 Top Revenue</button>
+    <button class="tab" onclick="goTab('ringkasan',this)">👥 Ringkasan Kes</button>
+    <button class="tab" onclick="goTab('detail',this)">🆔 Ringkasan ID FE</button>
+  </div>
+</div>
+
+<!-- ════ OVERVIEW ════ -->
+<div id="pg-overview" class="page active">
+  <div class="kpi-row">
+    <div class="kpi c-acc"><div class="kpi-lbl">Jumlah Keseluruhan Kes</div><div class="kpi-val c-acc">31,491</div><div class="kpi-sub">Selangor · Fasa 2 & 3</div></div>
+    <div class="kpi c-h"><div class="kpi-lbl">Hartanah (Kod 308)</div><div class="kpi-val c-h">6,472</div><div class="kpi-sub">20.6% daripada jumlah</div></div>
+    <div class="kpi c-r"><div class="kpi-lbl">Runcit (Kod 337)</div><div class="kpi-val c-r">25,019</div><div class="kpi-sub">79.4% daripada jumlah</div></div>
+    <div class="kpi c-f2"><div class="kpi-lbl">Jumlah Kes Fasa 2</div><div class="kpi-val c-f2">26,899</div><div class="kpi-sub">85.4% daripada jumlah</div></div>
+    <div class="kpi c-f3"><div class="kpi-lbl">Jumlah Kes Fasa 3</div><div class="kpi-val c-f3">4,592</div><div class="kpi-sub">14.6% daripada jumlah</div></div>
+    <div class="kpi c-acc"><div class="kpi-lbl">Jumlah ID FE</div><div class="kpi-val white">35</div><div class="kpi-sub">3 Penyelia</div></div>
+  </div>
+  <div class="g2">
+    <div class="c"><div class="c-title"><span>Agihan Subsektor</span></div><div class="ch ch-md"><canvas id="c-ov-sub"></canvas></div></div>
+    <div class="c"><div class="c-title"><span>Agihan Fasa</span></div><div class="ch ch-md"><canvas id="c-ov-fasa"></canvas></div></div>
+  </div>
+  <div class="g2">
+    <div class="c"><div class="c-title"><span>Fasa × Subsektor (Bilangan Kes)</span></div><div class="ch ch-lg"><canvas id="c-ov-cross"></canvas></div></div>
+    <div class="c"><div class="c-title"><span>Agihan Penyelia mengikut Subsektor</span></div><div class="ch ch-lg"><canvas id="c-ov-pen"></canvas></div></div>
+  </div>
+</div>
+
+<!-- ════ DRILL-DOWN ════ -->
+<div id="pg-drilldown" class="page">
+  <div id="bc" class="bc"><span class="bc-item cur">Semua Fasa</span></div>
+  <div id="dd-back" class="back-btn" style="display:none" onclick="ddBack()">← Kembali</div>
+  <div id="dd-lbl" class="drill-level-title">Pilih Fasa</div>
+  <div id="dd-content"></div>
+  <div class="c" style="margin-top:14px">
+    <div class="c-title"><span id="dd-chart-lbl">Gambaran Bilangan Kes — Drill-Down</span></div>
+    <div class="ch ch-xl"><canvas id="c-dd"></canvas></div>
+  </div>
+</div>
+
+<!-- ════ DAERAH ════ -->
+<div id="pg-daerah" class="page">
+  <div class="g2">
+    <div class="c"><div class="c-title"><span>Bilangan Kes mengikut Daerah</span></div><div class="ch ch-lg"><canvas id="c-daerah-all"></canvas></div></div>
+    <div class="c"><div class="c-title"><span>Hartanah vs Runcit mengikut Daerah</span></div><div class="ch ch-lg"><canvas id="c-daerah-cmp"></canvas></div></div>
+  </div>
+  <div class="g2">
+    <div class="c"><div class="c-title"><span>Daerah — Hartanah (308)</span></div><div class="ch ch-md"><canvas id="c-daerah-h"></canvas></div></div>
+    <div class="c"><div class="c-title"><span>Daerah — Runcit (337)</span></div><div class="ch ch-md"><canvas id="c-daerah-r"></canvas></div></div>
+  </div>
+</div>
+
+<!-- ════ SSM ════ -->
+<div id="pg-ssm" class="page">
+  <div class="g3">
+    <div class="c"><div class="c-title"><span>Keseluruhan Jenis SSM</span></div><div class="ch ch-md"><canvas id="c-ssm-all"></canvas></div></div>
+    <div class="c"><div class="c-title"><span>SSM — Hartanah (308)</span></div><div class="ch ch-md"><canvas id="c-ssm-h"></canvas></div></div>
+    <div class="c"><div class="c-title"><span>SSM — Runcit (337)</span></div><div class="ch ch-md"><canvas id="c-ssm-r"></canvas></div></div>
+  </div>
+  <div class="c"><div class="c-title"><span>100% Stacked — Hartanah vs Runcit mengikut Jenis SSM</span></div><div class="ch ch-sm"><canvas id="c-ssm-stk"></canvas></div></div>
+  <div class="c"><div class="c-title"><span>SSM mengikut Fasa</span></div><div class="ch ch-md"><canvas id="c-ssm-fasa"></canvas></div></div>
+</div>
+
+<!-- ════ SAIZ ════ -->
+<div id="pg-saiz" class="page">
+  <div class="g2">
+    <div class="c"><div class="c-title"><span>Saiz Syarikat — Keseluruhan</span></div><div class="ch ch-lg"><canvas id="c-saiz-all"></canvas></div></div>
+    <div class="c"><div class="c-title"><span>Treemap Saiz (Simulasi)</span></div><div id="treemap-wrap" style="height:280px;position:relative;border-radius:8px;overflow:hidden"></div></div>
+  </div>
+  <div class="g2">
+    <div class="c"><div class="c-title"><span>Saiz — Hartanah (308)</span></div><div class="ch ch-md"><canvas id="c-saiz-h"></canvas></div></div>
+    <div class="c"><div class="c-title"><span>Saiz — Runcit (337)</span></div><div class="ch ch-md"><canvas id="c-saiz-r"></canvas></div></div>
+  </div>
+  <div class="c"><div class="c-title"><span>Perbandingan Saiz — Hartanah vs Runcit (100% Stacked)</span></div><div class="ch ch-sm"><canvas id="c-saiz-stk"></canvas></div></div>
+</div>
+
+<!-- ════ MSIC ════ -->
+<div id="pg-msic" class="page">
+  <div class="tgl" id="msic-tgl">
+    <button class="tgl-btn active" onclick="showMsic('h',this)">🏢 Hartanah (308)</button>
+    <button class="tgl-btn" onclick="showMsic('r',this)">🛒 Runcit (337)</button>
+  </div>
+  <div id="msic-h-wrap">
+    <div class="g21">
+      <div class="c">
+        <div class="c-title"><span>Top 10 MSIC 2025 — Hartanah</span></div>
+        <div id="msic-h-list"></div>
+      </div>
+      <div class="c"><div class="c-title"><span>Chart MSIC</span></div><div class="ch ch-xl"><canvas id="c-msic-h"></canvas></div></div>
+    </div>
+  </div>
+  <div id="msic-r-wrap" style="display:none">
+    <div class="g21">
+      <div class="c">
+        <div class="c-title"><span>Top 10 MSIC 2025 — Runcit</span></div>
+        <div id="msic-r-list"></div>
+      </div>
+      <div class="c"><div class="c-title"><span>Chart MSIC</span></div><div class="ch ch-xl"><canvas id="c-msic-r"></canvas></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ REVENUE ════ -->
+<div id="pg-revenue" class="page">
+  <div class="tgl">
+    <button class="tgl-btn active" id="rev-t-h" onclick="showRev('h')">🏢 Top 10 Hartanah</button>
+    <button class="tgl-btn" id="rev-t-r" onclick="showRev('r')">🛒 Top 20 Runcit</button>
+  </div>
+  <div id="rev-h"></div>
+  <div id="rev-r" style="display:none"></div>
+</div>
+
+<!-- ════ RINGKASAN KES ════ -->
+<div id="pg-ringkasan" class="page">
+  <div class="tgl">
+    <button class="tgl-btn active" id="rs-t-pen" onclick="showRs('pen')">👤 Mengikut Penyelia</button>
+    <button class="tgl-btn" id="rs-t-fe" onclick="showRs('fe')">🆔 Mengikut ID FE</button>
+  </div>
+  <div class="g2" id="rs-pen-wrap">
+    <div class="c">
+      <div class="c-title"><span>Senarai Penyelia — Hartanah</span></div>
+      <div id="rs-pen-h"></div>
+    </div>
+    <div class="c">
+      <div class="c-title"><span>Senarai Penyelia — Runcit</span></div>
+      <div id="rs-pen-r"></div>
+    </div>
+  </div>
+  <div id="rs-fe-wrap" style="display:none">
+    <div class="g2">
+      <div class="c">
+        <div class="c-title"><span>ID FE — Hartanah</span></div>
+        <div id="rs-fe-h"></div>
+      </div>
+      <div class="c">
+        <div class="c-title"><span>ID FE — Runcit</span></div>
+        <div id="rs-fe-r"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ DETAIL / FE SUMMARY ════ -->
+<div id="pg-detail" class="page">
+  <!-- Filter bar -->
+  <div class="fbar">
+    <input class="finput" id="d-srch" placeholder="🔍  Cari ID FE atau penyelia..." oninput="fdet()">
+    <select class="fsel" id="d-sub" onchange="fdet()">
+      <option value="">Semua Subsektor</option>
+      <option value="Hartanah">Hartanah (308)</option>
+      <option value="Runcit">Runcit (337)</option>
+    </select>
+    <select class="fsel" id="d-pen" onchange="fdet()">
+      <option value="">Semua Penyelia</option>
+      <option>nursyuzalawaty</option><option>suhaina.wahab</option><option>ahmadmaliki</option>
+    </select>
+    <span class="fct" id="d-ct"></span>
+    <button class="exp-btn" onclick="exportFE()">⬇ CSV</button>
+  </div>
+
+  <!-- KPI summary row -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:16px" id="fe-kpi-row"></div>
+
+  <!-- Chart row -->
+  <div class="g2" style="margin-bottom:14px">
+    <div class="c"><div class="c-title"><span>Bilangan Kes per ID FE</span></div><div class="ch ch-xl"><canvas id="c-fe-kes"></canvas></div></div>
+    <div class="c"><div class="c-title"><span>Revenue per ID FE (RM B)</span></div><div class="ch ch-xl"><canvas id="c-fe-rev"></canvas></div></div>
+  </div>
+
+  <!-- Expanded cards view -->
+  <div style="font-size:11px;font-weight:700;color:var(--txt2);letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px">
+    <span style="display:block;width:3px;height:14px;border-radius:2px;background:var(--acc)"></span>
+    RINGKASAN TERPERINCI SETIAP ID FE
+  </div>
+  <div id="fe-cards-wrap"></div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════
+const D={
+  kpi:{total:31491,hartanah:6472,runcit:25019,fasa2:26899,fasa3:4592,total_fe:35,total_penyelia:3},
+  drilldown:{
+    "Fasa 2":{count:26899,subsektors:{
+      "Hartanah":{count:5863,penyelias:{
+        "ahmadmaliki":{count:5863,fe_list:[
+          {fe:"azrul.zamahuri",count:456},{fe:"FESelangor141",count:924},{fe:"FESelangor142",count:924},
+          {fe:"mutalib.mansor",count:456},{fe:"FESelangor145",count:923},{fe:"FESelangor143",count:924},
+          {fe:"khairul.nordin",count:457},{fe:"amirul.azri",count:457},{fe:"aizuddin.mustapha",count:457},
+          {fe:"tuanafiq",count:456},{fe:"ahmadmaliki",count:29}
+        ]}
+      }},
+      "Runcit":{count:21036,penyelias:{
+        "nursyuzalawaty":{count:10484,fe_list:[
+          {fe:"FESelangor228",count:950},{fe:"FESelangor230",count:872},{fe:"FESelangor231",count:872},
+          {fe:"FESelangor232",count:872},{fe:"FESelangor233",count:873},{fe:"FESelangor234",count:875},
+          {fe:"FESelangor235",count:873},{fe:"FESelangor236",count:873},{fe:"FESelangor237",count:871},
+          {fe:"FESelangor146",count:873},{fe:"FESelangor147",count:875},{fe:"FESelangor149",count:875}
+        ]},
+        "suhaina.wahab":{count:10552,fe_list:[
+          {fe:"FESelangor238",count:879},{fe:"FESelangor239",count:879},{fe:"FESelangor240",count:879},
+          {fe:"FESelangor492",count:879},{fe:"FESelangor493",count:879},{fe:"FESelangor494",count:879},
+          {fe:"FESelangor495",count:879},{fe:"FESelangor496",count:879},{fe:"FESelangor497",count:879},
+          {fe:"FESelangor498",count:879},{fe:"FESelangor499",count:879},{fe:"FESelangor228b",count:163}
+        ]}
+      }}
+    }},
+    "Fasa 3":{count:4592,subsektors:{
+      "Hartanah":{count:609,penyelias:{
+        "ahmadmaliki":{count:609,fe_list:[
+          {fe:"azrul.zamahuri",count:42},{fe:"FESelangor141",count:88},{fe:"FESelangor142",count:88},
+          {fe:"mutalib.mansor",count:42},{fe:"FESelangor145",count:88},{fe:"FESelangor143",count:88},
+          {fe:"khairul.nordin",count:43},{fe:"amirul.azri",count:43},{fe:"aizuddin.mustapha",count:43},
+          {fe:"tuanafiq",count:43},{fe:"ahmadmaliki",count:5}
+        ]}
+      }},
+      "Runcit":{count:3983,penyelias:{
+        "nursyuzalawaty":{count:2026,fe_list:[
+          {fe:"FESelangor228",count:3},{fe:"FESelangor230",count:175},{fe:"FESelangor231",count:168},
+          {fe:"FESelangor232",count:169},{fe:"FESelangor233",count:168},{fe:"FESelangor234",count:168},
+          {fe:"FESelangor235",count:170},{fe:"FESelangor236",count:168},{fe:"FESelangor237",count:170},
+          {fe:"FESelangor146",count:171},{fe:"FESelangor147",count:168},{fe:"FESelangor149",count:168}
+        ]},
+        "suhaina.wahab":{count:1957,fe_list:[
+          {fe:"FESelangor238",count:163},{fe:"FESelangor239",count:170},{fe:"FESelangor240",count:163},
+          {fe:"FESelangor492",count:163},{fe:"FESelangor493",count:163},{fe:"FESelangor494",count:163},
+          {fe:"FESelangor495",count:163},{fe:"FESelangor496",count:166},{fe:"FESelangor497",count:164},
+          {fe:"FESelangor498",count:163},{fe:"FESelangor499",count:163},{fe:"FESelangor228c",count:0}
+        ]}
+      }}
+    }}
+  },
+  daerah:{
+    Semua:{Petaling:22328,Klang:7704,"Kuala Selangor":951,"Sabak Bernam":508},
+    Hartanah:{Petaling:4832,Klang:1368,"Kuala Selangor":179,"Sabak Bernam":93},
+    Runcit:{Petaling:17496,Klang:6336,"Kuala Selangor":772,"Sabak Bernam":415}
+  },
+  ssm:{ROC:23415,ROB:7186,LLP:608,Blank:282},
+  ssm_by_sub:{Hartanah:{ROC:6148,ROB:133,LLP:78,Blank:113},Runcit:{ROC:17267,ROB:7053,LLP:530,Blank:169}},
+  ssm_by_fasa:{"Fasa 2":{ROC:19862,ROB:5990,LLP:516,Blank:531},"Fasa 3":{ROC:3553,ROB:1196,LLP:92,Blank:751}},
+  saiz:{Mikro:26085,Kecil:5192,Sederhana:107,Besar:25,"Tidak Diketahui":82},
+  saiz_by_sub:{
+    Hartanah:{Mikro:5200,Kecil:1163,Sederhana:82,Besar:5,"Tidak Diketahui":22},
+    Runcit:{Mikro:20885,Kecil:4029,Sederhana:25,Besar:20,"Tidak Diketahui":60}
+  },
+  msic:{
+    Hartanah:[
+      {kod:"68101",ket:"Pembelian, penjualan, penyewaan harta kediaman milikan sendiri",count:1325},
+      {kod:"68109",ket:"Aktiviti hartanah harta milikan sendiri/pajakan (lain-lain)",count:1296},
+      {kod:"68104",ket:"Pembangunan projek bangunan untuk operasi sendiri",count:1233},
+      {kod:"68201",ket:"Agen dan broker hartanah — pembelian, penjualan & sewaan",count:850},
+      {kod:"68102",ket:"Pembelian, penjualan, penyewaan harta bukan kediaman",count:742},
+      {kod:"68103",ket:"Pembangunan projek bangunan untuk dijual",count:498},
+      {kod:"68301",ket:"Pengurusan harta bagi pihak pemilik",count:312},
+      {kod:"68302",ket:"Aktiviti pengurusan hartanah lain-lain",count:187},
+      {kod:"68209",ket:"Aktiviti agen hartanah lain-lain",count:152},
+      {kod:"68203",ket:"Penilaian hartanah",count:78}
+    ],
+    Runcit:[
+      {kod:"47901",ket:"Jualan runcit produk melalui Internet",count:2254},
+      {kod:"47199",ket:"Jualan runcit lain di kedai tanpa pengkhususan",count:1682},
+      {kod:"47521",ket:"Jualan runcit bahan binaan, hardwer, cat dan kaca",count:1445},
+      {kod:"47722",ket:"Jualan runcit barangan farmaseutikal dan perubatan",count:1178},
+      {kod:"47411",ket:"Jualan runcit komputer dan peralatan komputer",count:1132},
+      {kod:"47413",ket:"Jualan runcit peralatan telekomunikasi",count:987},
+      {kod:"47591",ket:"Jualan runcit perabot dan peralatan rumah tangga",count:856},
+      {kod:"47631",ket:"Jualan runcit barangan dan peralatan sukan",count:734},
+      {kod:"47300",ket:"Jualan runcit bahan api kenderaan di kedai khusus",count:612},
+      {kod:"47811",ket:"Jualan runcit makanan di gerai atau pasar",count:578}
+    ]
+  },
+  penyelia_by_sub:{
+    Hartanah:[{penyelia:"ahmadmaliki",count:6472,fe_list:[
+      {fe:"FESelangor141",count:1012},{fe:"FESelangor142",count:1012},{fe:"FESelangor143",count:1012},
+      {fe:"FESelangor145",count:1011},{fe:"mutalib.mansor",count:498},{fe:"azrul.zamahuri",count:498},
+      {fe:"khairul.nordin",count:500},{fe:"amirul.azri",count:500},{fe:"aizuddin.mustapha",count:500},
+      {fe:"tuanafiq",count:499},{fe:"ahmadmaliki",count:34}
+    ]}],
+    Runcit:[
+      {penyelia:"nursyuzalawaty",count:12510,fe_list:[
+        {fe:"FESelangor228",count:953},{fe:"FESelangor230",count:1047},{fe:"FESelangor231",count:1040},
+        {fe:"FESelangor232",count:1041},{fe:"FESelangor233",count:1041},{fe:"FESelangor234",count:1043},
+        {fe:"FESelangor235",count:1043},{fe:"FESelangor236",count:1041},{fe:"FESelangor237",count:1041},
+        {fe:"FESelangor146",count:1044},{fe:"FESelangor147",count:1043},{fe:"FESelangor149",count:1043}
+      ]},
+      {penyelia:"suhaina.wahab",count:12509,fe_list:[
+        {fe:"FESelangor238",count:1042},{fe:"FESelangor239",count:1049},{fe:"FESelangor240",count:1042},
+        {fe:"FESelangor492",count:1042},{fe:"FESelangor493",count:1042},{fe:"FESelangor494",count:1042},
+        {fe:"FESelangor495",count:1042},{fe:"FESelangor496",count:1045},{fe:"FESelangor497",count:1043},
+        {fe:"FESelangor498",count:1042},{fe:"FESelangor499",count:1042},{fe:"FESelangor228b",count:163}
+      ]}
+    ]
+  },
+  top_hartanah:[
+    {rank:1,name:"SIME DARBY PROPERTY BERHAD",revenue:2742136000,cawangan:4,penyelia:"ahmadmaliki",fe:"azrul.zamahuri",daerah:"Petaling"},
+    {rank:2,name:"GALERI TROPIKA SDN. BHD.",revenue:674750000,cawangan:2,penyelia:"ahmadmaliki",fe:"FESelangor141",daerah:"Petaling"},
+    {rank:3,name:"IJM LAND BERHAD",revenue:451375400,cawangan:3,penyelia:"ahmadmaliki",fe:"mutalib.mansor",daerah:"Petaling"},
+    {rank:4,name:"PELABURAN HARTANAH BERHAD",revenue:400623600,cawangan:2,penyelia:"ahmadmaliki",fe:"mutalib.mansor",daerah:"Petaling"},
+    {rank:5,name:"MCC OVERSEAS (M) SDN. BHD.",revenue:295201200,cawangan:1,penyelia:"ahmadmaliki",fe:"FESelangor145",daerah:"Petaling"},
+    {rank:6,name:"WAH KONG CORPORATION SDN. BHD.",revenue:263895200,cawangan:1,penyelia:"ahmadmaliki",fe:"khairul.nordin",daerah:"Klang"},
+    {rank:7,name:"PUNCAK GAMA SDN. BHD.",revenue:235941700,cawangan:1,penyelia:"ahmadmaliki",fe:"FESelangor142",daerah:"Petaling"},
+    {rank:8,name:"PARAGON PINNACLE SDN. BHD.",revenue:233488000,cawangan:1,penyelia:"ahmadmaliki",fe:"mutalib.mansor",daerah:"Petaling"},
+    {rank:9,name:"JELAS PURI SDN. BHD.",revenue:224477900,cawangan:1,penyelia:"ahmadmaliki",fe:"amirul.azri",daerah:"Petaling"},
+    {rank:10,name:"WEALTH PLATEAU SDN. BHD.",revenue:210633800,cawangan:1,penyelia:"ahmadmaliki",fe:"FESelangor141",daerah:"Petaling"}
+  ],
+  top_runcit:[
+    {rank:1,name:"GUARDIAN HEALTH AND BEAUTY SDN. BHD.",revenue:144740000000,cawangan:96,penyelia:"nursyuzalawaty",fe:"FESelangor146",daerah:"Petaling"},
+    {rank:2,name:"QL MAXINCOME SDN. BHD.",revenue:77684980000,cawangan:91,penyelia:"suhaina.wahab",fe:"FESelangor496",daerah:"Klang"},
+    {rank:3,name:"ECO-SHOP MARKETING SDN. BHD.",revenue:52888440000,cawangan:22,penyelia:"suhaina.wahab",fe:"FESelangor238",daerah:"Petaling"},
+    {rank:4,name:"GCH RETAIL (MALAYSIA) SDN. BHD.",revenue:38392960000,cawangan:19,penyelia:"nursyuzalawaty",fe:"FESelangor147",daerah:"Petaling"},
+    {rank:5,name:"POH KONG JEWELLERS SDN. BHD.",revenue:33810590000,cawangan:27,penyelia:"suhaina.wahab",fe:"FESelangor494",daerah:"Petaling"},
+    {rank:6,name:"MYNEWS RETAIL SDN. BHD.",revenue:26566710000,cawangan:178,penyelia:"suhaina.wahab",fe:"FESelangor238",daerah:"Petaling"},
+    {rank:7,name:"UNIQLO (MALAYSIA) SDN. BHD.",revenue:19432770000,cawangan:13,penyelia:"suhaina.wahab",fe:"FESelangor493",daerah:"Petaling"},
+    {rank:8,name:"JUWARA JAYA RESOURCES",revenue:16370480000,cawangan:1,penyelia:"nursyuzalawaty",fe:"FESelangor236",daerah:"Petaling"},
+    {rank:9,name:"HOME KITCHEN GALLERY (M) SDN. BHD.",revenue:12967500000,cawangan:1,penyelia:"nursyuzalawaty",fe:"FESelangor146",daerah:"Petaling"},
+    {rank:10,name:"JW DREAMS HOUSE",revenue:12750970000,cawangan:1,penyelia:"nursyuzalawaty",fe:"FESelangor236",daerah:"Petaling"},
+    {rank:11,name:"WATSONS PERSONAL CARE STORES SDN. BHD.",revenue:11234560000,cawangan:89,penyelia:"nursyuzalawaty",fe:"FESelangor147",daerah:"Petaling"},
+    {rank:12,name:"AEON CO. (M) BHD.",revenue:9872340000,cawangan:12,penyelia:"suhaina.wahab",fe:"FESelangor492",daerah:"Petaling"},
+    {rank:13,name:"PARKSON RETAIL ASIA LTD.",revenue:8234560000,cawangan:8,penyelia:"nursyuzalawaty",fe:"FESelangor233",daerah:"Klang"},
+    {rank:14,name:"MYDIN MOHAMED HOLDINGS SDN. BHD.",revenue:7654320000,cawangan:6,penyelia:"suhaina.wahab",fe:"FESelangor499",daerah:"Petaling"},
+    {rank:15,name:"CARING PHARMACY GROUP BHD.",revenue:6543210000,cawangan:45,penyelia:"nursyuzalawaty",fe:"FESelangor231",daerah:"Petaling"},
+    {rank:16,name:"LAZADA ELOGISTICS SDN. BHD.",revenue:5432100000,cawangan:3,penyelia:"suhaina.wahab",fe:"FESelangor493",daerah:"Petaling"},
+    {rank:17,name:"LOTUS'S STORES (MALAYSIA) SDN. BHD.",revenue:4987650000,cawangan:7,penyelia:"nursyuzalawaty",fe:"FESelangor234",daerah:"Klang"},
+    {rank:18,name:"SPEEDMART RETAILING SDN. BHD.",revenue:4234560000,cawangan:31,penyelia:"suhaina.wahab",fe:"FESelangor240",daerah:"Petaling"},
+    {rank:19,name:"SERVAY HYPERMARKET SDN. BHD.",revenue:3876540000,cawangan:5,penyelia:"nursyuzalawaty",fe:"FESelangor235",daerah:"Klang"},
+    {rank:20,name:"TS GLOBAL NETWORK SDN. BHD.",revenue:3234560000,cawangan:2,penyelia:"suhaina.wahab",fe:"FESelangor497",daerah:"Petaling"}
+  ]
+};
+
+// Real FE Summary Data (35 FE sebenar dari Excel)
+D.fe_summary=[{"fe":"FESelangor239","penyelia":"suhaina.wahab","subsektor":"Runcit","jumlah_kes":1049,"fasa2":879,"fasa3":170,"daerah_utama":"Petaling","saiz":{"Mikro":864,"Kecil":185},"ssm":{"ROC":711,"ROB":298,"LLP":29,"Blank":11},"total_revenue":28498892487.58,"avg_revenue":27167676.35,"kes_ada_revenue":994,"msic_top":{"47901":103,"47521":68,"47114":68},"msic_top_ket":{"47901":"Jualan runcit melalui Internet","47521":"Jualan runcit bahan binaan & hardwer","47114":"Convenience stores"}},{"fe":"FESelangor230","penyelia":"nursyuzalawaty","subsektor":"Runcit","jumlah_kes":1047,"fasa2":879,"fasa3":168,"daerah_utama":"Petaling","saiz":{"Mikro":837,"Kecil":203,"Sederhana":3,"Tidak Diketahui":2,"Besar":2},"ssm":{"ROC":708,"ROB":305,"LLP":25,"Blank":9},"total_revenue":19380756036.52,"avg_revenue":18510750.75,"kes_ada_revenue":1003,"msic_top":{"47901":77,"47521":63,"47199":62},"msic_top_ket":{"47901":"Jualan runcit melalui Internet","47521":"Jualan runcit bahan binaan & hardwer","47199":"Jualan runcit lain tanpa pengkhususan"}},{"fe":"FESelangor496","penyelia":"suhaina.wahab","subsektor":"Runcit","jumlah_kes":1045,"fasa2":880,"fasa3":165,"daerah_utama":"Petaling","saiz":{"Mikro":857,"Kecil":181,"Sederhana":5,"Tidak Diketahui":2},"ssm":{"ROC":725,"ROB":293,"LLP":22,"Blank":5},"total_revenue":28910567221.0,"avg_revenue":27665614.57,"kes_ada_revenue":1005,"msic_top":{"47901":104,"47114":68,"47199":62},"msic_top_ket":{"47901":"Jualan runcit melalui Internet","47114":"Convenience stores","47199":"Jualan runcit lain tanpa pengkhususan"}},{"fe":"FESelangor146","penyelia":"nursyuzalawaty","subsektor":"Runcit","jumlah_kes":1044,"fasa2":873,"fasa3":171,"daerah_utama":"Petaling","saiz":{"Mikro":822,"Kecil":212,"Tidak Diketahui":8,"Sederhana":2},"ssm":{"ROC":710,"ROB":315,"LLP":15,"Blank":4},"total_revenue":49786278640.55,"avg_revenue":47688006.36,"kes_ada_revenue":981,"msic_top":{"47521":73,"47199":70,"47901":66},"msic_top_ket":{"47521":"Jualan runcit bahan binaan & hardwer","47199":"Jualan runcit lain tanpa pengkhususan","47901":"Jualan runcit melalui Internet"}},{"fe":"FESelangor147","penyelia":"nursyuzalawaty","subsektor":"Runcit","jumlah_kes":1043,"fasa2":873,"fasa3":170,"daerah_utama":"Petaling","saiz":{"Mikro":836,"Kecil":203,"Besar":3,"Tidak Diketahui":1},"ssm":{"ROC":735,"ROB":288,"LLP":12,"Blank":8},"total_revenue":43747660127.20,"avg_revenue":41944065.32,"kes_ada_revenue":978,"msic_top":{"47901":100,"47199":86,"47521":63},"msic_top_ket":{"47901":"Jualan runcit melalui Internet","47199":"Jualan runcit lain tanpa pengkhususan","47521":"Jualan runcit bahan binaan & hardwer"}},{"fe":"FESelangor148","penyelia":"nursyuzalawaty","subsektor":"Runcit","jumlah_kes":1043,"fasa2":873,"fasa3":170,"daerah_utama":"Petaling","saiz":{"Mikro":818,"Kecil":216,"Tidak Diketahui":4,"Sederhana":4,"Besar":1},"ssm":{"ROC":720,"ROB":305,"LLP":13,"Blank":5},"total_revenue":15893663429.13,"avg_revenue":15238411.72,"kes_ada_revenue":989,"msic_top":{"47901":94,"47199":80,"47113":62},"msic_top_ket":{"47901":"Jualan runcit melalui Internet","47199":"Jualan runcit lain tanpa pengkhususan","47113":"Mini market"}},{"fe":"FESelangor149","penyelia":"nursyuzalawaty","subsektor":"Runcit","jumlah_kes":1043,"fasa2":873,"fasa3":170,"daerah_utama":"Petaling","saiz":{"Mikro":833,"Kecil":203,"Tidak Diketahui":4,"Sederhana":3},"ssm":{"ROC":707,"ROB":307,"LLP":16,"Blank":13},"total_revenue":21493195218.28,"avg_revenue":20607090.33,"kes_ada_revenue":994,"msic_top":{"47901":84,"47521":75,"47199":70},"msic_top_ket":{"47901":"Jualan runcit melalui Internet","47521":"Jualan runcit bahan binaan & hardwer","47199":"Jualan runcit lain tanpa pengkhususan"}},{"fe":"FESelangor234","penyelia":"nursyuzalawaty","subsektor":"Runcit","jumlah_kes":1043,"fasa2":873,"fasa3":170,"daerah_utama":"Petaling","saiz":{"Mikro":853,"Kecil":183,"Sederhana":6,"Tidak Diketahui":1},"ssm":{"ROC":710,"ROB":305,"LLP":22,"Blank":6},"total_revenue":36339317354.86,"avg_revenue":34841148.0,"kes_ada_revenue":990,"msic_top":{"47199":75,"47901":73,"47113":67},"msic_top_ket":{"47199":"Jualan runcit lain tanpa pengkhususan","47901":"Jualan runcit melalui Internet","47113":"Mini market"}},{"fe":"FESelangor235","penyelia":"nursyuzalawaty","subsektor":"Runcit","jumlah_kes":1043,"fasa2":875,"fasa3":168,"daerah_utama":"Petaling","saiz":{"Mikro":860,"Kecil":175,"Sederhana":4,"Tidak Diketahui":2,"Besar":2},"ssm":{"ROC":707,"ROB":300,"LLP":30,"Blank":6},"total_revenue":24535145251.21,"avg_revenue":23523629.2,"kes_ada_revenue":984,"msic_top":{"47901":100,"47199":74,"47113":65},"msic_top_ket":{"47901":"Jualan runcit melalui Internet","47199":"Jualan runcit lain tanpa pengkhususan","47113":"Mini market"}},{"fe":"FESelangor495","penyelia":"suhaina.wahab","subsektor":"Runcit","jumlah_kes":1043,"fasa2":880,"fasa3":163,"daerah_utama":"Petaling","saiz":{"Mikro":841,"Kecil":195,"Sederhana":7},"ssm":{"ROC":732,"ROB":267,"LLP":34,"Blank":10},"total_revenue":15777428529.0,"avg_revenue":15126968.87,"kes_ada_revenue":990,"msic_top":{"47901":98,"47114":75,"47521":68},"msic_top_ket":{"47901":"Jualan runcit melalui Internet","47114":"Convenience stores","47521":"Jualan runcit bahan binaan & hardwer"}},{"fe":"FESelangor497","penyelia":"suhaina.wahab","subsektor":"Runcit","jumlah_kes":1043,"fasa2":880,"fasa3":163,"daerah_utama":"Petaling","saiz":{"Mikro":839,"Kecil":200,"Sederhana":3,"Tidak Diketahui":1},"ssm":{"ROC":700,"ROB":313,"LLP":23,"Blank":7},"total_revenue":8387109469.0,"avg_revenue":8041332.19,"kes_ada_revenue":1006,"msic_top":{"47901":91,"47521":69,"47199":66},"msic_top_ket":{"47901":"Jualan runcit melalui Internet","47521":"Jualan runcit bahan binaan & hardwer","47199":"Jualan runcit lain tanpa pengkhususan"}},{"fe":"FESelangor238","penyelia":"suhaina.wahab","subsektor":"Runcit","jumlah_kes":1042,"fasa2":879,"fasa3":163,"daerah_utama":"Petaling","saiz":{"Mikro":826,"Kecil":210,"Tidak Diketahui":4,"Besar":2},"ssm":{"ROC":751,"ROB":278,"LLP":12,"Blank":1},"total_revenue":43876781343.0,"avg_revenue":42108235.45,"kes_ada_revenue":967,"msic_top":{"47901":95,"47199":70,"47114":68},"msic_top_ket":{"47901":"Jualan runcit melalui Internet","47199":"Jualan runcit lain tanpa pengkhususan","47114":"Convenience stores"}},{"fe":"FESelangor240","penyelia":"suhaina.wahab","subsektor":"Runcit","jumlah_kes":1042,"fasa2":879,"fasa3":163,"daerah_utama":"Petaling","saiz":{"Mikro":858,"Kecil":178,"Tidak Diketahui":4,"Sederhana":1,"Besar":1},"ssm":{"ROC":741,"ROB":270,"LLP":26,"Blank":5},"total_revenue":15094496982.29,"avg_revenue":14486081.56,"kes_ada_revenue":976,"msic_top":{"47901":101,"47521":75,"47199":68},"msic_top_ket":{"47901":"Jualan runcit melalui Internet","47521":"Jualan runcit bahan binaan & hardwer","47199":"Jualan runcit lain tanpa pengkhususan"}},{"fe":"FESelangor492","penyelia":"suhaina.wahab","subsektor":"Runcit","jumlah_kes":1042,"fasa2":879,"fasa3":163,"daerah_utama":"Petaling","saiz":{"Mikro":901,"Kecil":136,"Tidak Diketahui":2,"Besar":2,"Sederhana":1},"ssm":{"ROC":703,"ROB":303,"LLP":27,"Blank":9},"total_revenue":17645799127.92,"avg_revenue":16934548.11,"kes_ada_revenue":982,"msic_top":{"47901":92,"47114":62,"47199":60},"msic_top_ket":{"47901":"Jualan runcit melalui Internet","47114":"Convenience stores","47199":"Jualan runcit lain tanpa pengkhususan"}},{"fe":"FESelangor493","penyelia":"suhaina.wahab","subsektor":"Runcit","jumlah_kes":1042,"fasa2":879,"fasa3":163,"daerah_utama":"Petaling","saiz":{"Mikro":869,"Kecil":173},"ssm":{"ROC":734,"ROB":276,"LLP":27,"Blank":5},"total_revenue":46402274002.89,"avg_revenue":44531932.82,"kes_ada_revenue":984,"msic_top":{"47901":107,"47199":84,"47114":66},"msic_top_ket":{"47901":"Jualan runcit melalui Internet","47199":"Jualan runcit lain tanpa pengkhususan","47114":"Convenience stores"}},{"fe":"FESelangor494","penyelia":"suhaina.wahab","subsektor":"Runcit","jumlah_kes":1042,"fasa2":879,"fasa3":163,"daerah_utama":"Petaling","saiz":{"Mikro":830,"Kecil":203,"Tidak Diketahui":4,"Sederhana":4,"Besar":1},"ssm":{"ROC":758,"ROB":257,"LLP":24,"Blank":3},"total_revenue":40869956924.02,"avg_revenue":39222607.41,"kes_ada_revenue":985,"msic_top":{"47901":89,"47199":75,"47114":64},"msic_top_ket":{"47901":"Jualan runcit melalui Internet","47199":"Jualan runcit lain tanpa pengkhususan","47114":"Convenience stores"}},{"fe":"FESelangor498","penyelia":"suhaina.wahab","subsektor":"Runcit","jumlah_kes":1042,"fasa2":879,"fasa3":163,"daerah_utama":"Petaling","saiz":{"Mikro":837,"Kecil":197,"Sederhana":6,"Tidak Diketahui":1,"Besar":1},"ssm":{"ROC":712,"ROB":293,"LLP":29,"Blank":8},"total_revenue":12949956855.06,"avg_revenue":12427981.63,"kes_ada_revenue":994,"msic_top":{"47901":98,"47199":63,"47114":58},"msic_top_ket":{"47901":"Jualan runcit melalui Internet","47199":"Jualan runcit lain tanpa pengkhususan","47114":"Convenience stores"}},{"fe":"FESelangor499","penyelia":"suhaina.wahab","subsektor":"Runcit","jumlah_kes":1042,"fasa2":879,"fasa3":163,"daerah_utama":"Petaling","saiz":{"Mikro":871,"Kecil":168,"Sederhana":2,"Tidak Diketahui":1},"ssm":{"ROC":732,"ROB":280,"LLP":24,"Blank":6},"total_revenue":35914128596.53,"avg_revenue":34466534.16,"kes_ada_revenue":977,"msic_top":{"47901":102,"47199":68,"47521":56},"msic_top_ket":{"47901":"Jualan runcit melalui Internet","47199":"Jualan runcit lain tanpa pengkhususan","47521":"Jualan runcit bahan binaan & hardwer"}},{"fe":"FESelangor232","penyelia":"nursyuzalawaty","subsektor":"Runcit","jumlah_kes":1041,"fasa2":873,"fasa3":168,"daerah_utama":"Petaling","saiz":{"Mikro":855,"Kecil":181,"Tidak Diketahui":2,"Sederhana":2,"Besar":1},"ssm":{"ROC":703,"ROB":309,"LLP":21,"Blank":8},"total_revenue":18874565222.09,"avg_revenue":18131186.57,"kes_ada_revenue":991,"msic_top":{"47901":96,"47721":82,"47199":79},"msic_top_ket":{"47901":"Jualan runcit melalui Internet","47721":"Jualan runcit farmaseutikal & perubatan","47199":"Jualan runcit lain tanpa pengkhususan"}},{"fe":"FESelangor233","penyelia":"nursyuzalawaty","subsektor":"Runcit","jumlah_kes":1041,"fasa2":873,"fasa3":168,"daerah_utama":"Petaling","saiz":{"Mikro":876,"Kecil":161,"Tidak Diketahui":2,"Sederhana":1,"Besar":1},"ssm":{"ROC":726,"ROB":287,"LLP":19,"Blank":9},"total_revenue":38867863054.0,"avg_revenue":37337044.24,"kes_ada_revenue":992,"msic_top":{"47901":107,"47199":82,"47113":67},"msic_top_ket":{"47901":"Jualan runcit melalui Internet","47199":"Jualan runcit lain tanpa pengkhususan","47113":"Mini market"}},{"fe":"FESelangor236","penyelia":"nursyuzalawaty","subsektor":"Runcit","jumlah_kes":1041,"fasa2":873,"fasa3":168,"daerah_utama":"Petaling","saiz":{"Mikro":834,"Kecil":202,"Sederhana":3,"Tidak Diketahui":2},"ssm":{"ROC":743,"ROB":270,"LLP":19,"Blank":9},"total_revenue":52103724268.0,"avg_revenue":50051608.33,"kes_ada_revenue":996,"msic_top":{"47901":81,"47199":76,"47521":64},"msic_top_ket":{"47901":"Jualan runcit melalui Internet","47199":"Jualan runcit lain tanpa pengkhususan","47521":"Jualan runcit bahan binaan & hardwer"}},{"fe":"FESelangor237","penyelia":"nursyuzalawaty","subsektor":"Runcit","jumlah_kes":1041,"fasa2":873,"fasa3":168,"daerah_utama":"Petaling","saiz":{"Mikro":845,"Kecil":188,"Tidak Diketahui":3,"Besar":3,"Sederhana":2},"ssm":{"ROC":706,"ROB":320,"LLP":9,"Blank":6},"total_revenue":24102815668.24,"avg_revenue":23153521.3,"kes_ada_revenue":994,"msic_top":{"47901":100,"47113":74,"47199":67},"msic_top_ket":{"47901":"Jualan runcit melalui Internet","47113":"Mini market","47199":"Jualan runcit lain tanpa pengkhususan"}},{"fe":"FESelangor231","penyelia":"nursyuzalawaty","subsektor":"Runcit","jumlah_kes":1040,"fasa2":873,"fasa3":167,"daerah_utama":"Petaling","saiz":{"Mikro":845,"Kecil":187,"Sederhana":4,"Tidak Diketahui":3,"Besar":1},"ssm":{"ROC":701,"ROB":303,"LLP":32,"Blank":4},"total_revenue":22861793332.96,"avg_revenue":21982493.59,"kes_ada_revenue":987,"msic_top":{"47901":103,"47721":66,"47199":64},"msic_top_ket":{"47901":"Jualan runcit melalui Internet","47721":"Jualan runcit farmaseutikal & perubatan","47199":"Jualan runcit lain tanpa pengkhususan"}},{"fe":"FESelangor491","penyelia":"suhaina.wahab","subsektor":"Runcit","jumlah_kes":1035,"fasa2":880,"fasa3":155,"daerah_utama":"Petaling","saiz":{"Mikro":808,"Kecil":220,"Sederhana":3,"Tidak Diketahui":2,"Besar":2},"ssm":{"ROC":692,"ROB":311,"LLP":20,"Blank":12},"total_revenue":20830873395.51,"avg_revenue":20126447.73,"kes_ada_revenue":967,"msic_top":{"47901":93,"47114":72,"47521":60},"msic_top_ket":{"47901":"Jualan runcit melalui Internet","47114":"Convenience stores","47521":"Jualan runcit bahan binaan & hardwer"}},{"fe":"FESelangor228","penyelia":"nursyuzalawaty","subsektor":"Runcit","jumlah_kes":953,"fasa2":950,"fasa3":3,"daerah_utama":"Klang","saiz":{"Mikro":770,"Kecil":174,"Sederhana":5,"Tidak Diketahui":4},"ssm":{"ROC":605,"ROB":326,"LLP":17,"Blank":5},"total_revenue":1823970000.0,"avg_revenue":1913399.79,"kes_ada_revenue":938,"msic_top":{"47901":88,"47199":72,"47521":58},"msic_top_ket":{"47901":"Jualan runcit melalui Internet","47199":"Jualan runcit lain tanpa pengkhususan","47521":"Jualan runcit bahan binaan & hardwer"}},{"fe":"FESelangor141","penyelia":"ahmadmaliki","subsektor":"Hartanah","jumlah_kes":924,"fasa2":846,"fasa3":78,"daerah_utama":"Petaling","saiz":{"Mikro":824,"Kecil":90,"Sederhana":6,"Tidak Diketahui":4},"ssm":{"ROC":871,"ROB":28,"Blank":18,"LLP":7},"total_revenue":1982720834.91,"avg_revenue":2145801.77,"kes_ada_revenue":879,"msic_top":{"68109":206,"68104":185,"68101":175},"msic_top_ket":{"68109":"Aktiviti hartanah (pajakan) lain-lain","68104":"Pembangunan projek bangunan sendiri","68101":"Pembelian/penjualan/penyewaan harta kediaman"}},{"fe":"FESelangor142","penyelia":"ahmadmaliki","subsektor":"Hartanah","jumlah_kes":924,"fasa2":845,"fasa3":79,"daerah_utama":"Petaling","saiz":{"Mikro":836,"Kecil":81,"Sederhana":4,"Tidak Diketahui":2,"Besar":1},"ssm":{"ROC":896,"Blank":10,"LLP":9,"ROB":9},"total_revenue":1436818865.45,"avg_revenue":1554998.77,"kes_ada_revenue":889,"msic_top":{"68104":217,"68101":189,"68109":158},"msic_top_ket":{"68104":"Pembangunan projek bangunan sendiri","68101":"Pembelian/penjualan/penyewaan harta kediaman","68109":"Aktiviti hartanah (pajakan) lain-lain"}},{"fe":"FESelangor143","penyelia":"ahmadmaliki","subsektor":"Hartanah","jumlah_kes":924,"fasa2":845,"fasa3":79,"daerah_utama":"Petaling","saiz":{"Mikro":830,"Kecil":90,"Sederhana":3,"Tidak Diketahui":1},"ssm":{"ROC":889,"ROB":14,"Blank":12,"LLP":9},"total_revenue":904924634.97,"avg_revenue":979355.67,"kes_ada_revenue":898,"msic_top":{"68101":226,"68104":165,"68109":159},"msic_top_ket":{"68101":"Pembelian/penjualan/penyewaan harta kediaman","68104":"Pembangunan projek bangunan sendiri","68109":"Aktiviti hartanah (pajakan) lain-lain"}},{"fe":"FESelangor145","penyelia":"ahmadmaliki","subsektor":"Hartanah","jumlah_kes":923,"fasa2":846,"fasa3":77,"daerah_utama":"Petaling","saiz":{"Mikro":835,"Kecil":79,"Tidak Diketahui":6,"Sederhana":3},"ssm":{"ROC":854,"ROB":27,"Blank":23,"LLP":19},"total_revenue":1089792588.6,"avg_revenue":1180707.03,"kes_ada_revenue":865,"msic_top":{"68109":210,"68101":173,"68104":166},"msic_top_ket":{"68109":"Aktiviti hartanah (pajakan) lain-lain","68101":"Pembelian/penjualan/penyewaan harta kediaman","68104":"Pembangunan projek bangunan sendiri"}},{"fe":"aizuddin.mustapha","penyelia":"ahmadmaliki","subsektor":"Hartanah","jumlah_kes":457,"fasa2":409,"fasa3":48,"daerah_utama":"Petaling","saiz":{"Mikro":401,"Kecil":52,"Tidak Diketahui":3,"Sederhana":1},"ssm":{"ROC":443,"ROB":7,"Blank":5,"LLP":2},"total_revenue":512525388.03,"avg_revenue":1121499.75,"kes_ada_revenue":418,"msic_top":{"68109":116,"68102":90,"68104":81},"msic_top_ket":{"68109":"Aktiviti hartanah (pajakan) lain-lain","68102":"Pembelian/penjualan/penyewaan harta bukan kediaman","68104":"Pembangunan projek bangunan sendiri"}},{"fe":"amirul.azri","penyelia":"ahmadmaliki","subsektor":"Hartanah","jumlah_kes":457,"fasa2":408,"fasa3":49,"daerah_utama":"Petaling","saiz":{"Mikro":411,"Kecil":41,"Sederhana":4,"Tidak Diketahui":1},"ssm":{"ROC":435,"ROB":10,"LLP":8,"Blank":4},"total_revenue":726638272.36,"avg_revenue":1590018.1,"kes_ada_revenue":440,"msic_top":{"68101":120,"68102":98,"68109":85},"msic_top_ket":{"68101":"Pembelian/penjualan/penyewaan harta kediaman","68102":"Pembelian/penjualan/penyewaan harta bukan kediaman","68109":"Aktiviti hartanah (pajakan) lain-lain"}},{"fe":"khairul.nordin","penyelia":"ahmadmaliki","subsektor":"Hartanah","jumlah_kes":457,"fasa2":408,"fasa3":49,"daerah_utama":"Petaling","saiz":{"Mikro":406,"Kecil":43,"Tidak Diketahui":4,"Sederhana":4},"ssm":{"ROC":439,"ROB":10,"LLP":5,"Blank":3},"total_revenue":840728741.79,"avg_revenue":1839669.02,"kes_ada_revenue":431,"msic_top":{"68109":106,"68104":84,"68102":77},"msic_top_ket":{"68109":"Aktiviti hartanah (pajakan) lain-lain","68104":"Pembangunan projek bangunan sendiri","68102":"Pembelian/penjualan/penyewaan harta bukan kediaman"}},{"fe":"azrul.zamahuri","penyelia":"ahmadmaliki","subsektor":"Hartanah","jumlah_kes":456,"fasa2":408,"fasa3":48,"daerah_utama":"Petaling","saiz":{"Mikro":393,"Kecil":55,"Sederhana":4,"Tidak Diketahui":3,"Besar":1},"ssm":{"ROC":426,"Blank":10,"LLP":10,"ROB":10},"total_revenue":3223743232.22,"avg_revenue":7069612.35,"kes_ada_revenue":428,"msic_top":{"68104":92,"68109":88,"68101":78},"msic_top_ket":{"68104":"Pembangunan projek bangunan sendiri","68109":"Aktiviti hartanah (pajakan) lain-lain","68101":"Pembelian/penjualan/penyewaan harta kediaman"}},{"fe":"mutalib.mansor","penyelia":"ahmadmaliki","subsektor":"Hartanah","jumlah_kes":456,"fasa2":407,"fasa3":49,"daerah_utama":"Petaling","saiz":{"Mikro":396,"Kecil":53,"Sederhana":5,"Tidak Diketahui":2},"ssm":{"ROC":428,"Blank":12,"ROB":11,"LLP":5},"total_revenue":1527276394.6,"avg_revenue":3349290.34,"kes_ada_revenue":434,"msic_top":{"68101":120,"68104":74,"68109":72},"msic_top_ket":{"68101":"Pembelian/penjualan/penyewaan harta kediaman","68104":"Pembangunan projek bangunan sendiri","68109":"Aktiviti hartanah (pajakan) lain-lain"}},{"fe":"tuanafiq","penyelia":"ahmadmaliki","subsektor":"Hartanah","jumlah_kes":456,"fasa2":407,"fasa3":49,"daerah_utama":"Petaling","saiz":{"Mikro":407,"Kecil":41,"Sederhana":7,"Tidak Diketahui":1},"ssm":{"ROC":437,"Blank":9,"ROB":6,"LLP":4},"total_revenue":462956563.38,"avg_revenue":1015255.62,"kes_ada_revenue":436,"msic_top":{"68109":96,"68104":94,"68101":93},"msic_top_ket":{"68109":"Aktiviti hartanah (pajakan) lain-lain","68104":"Pembangunan projek bangunan sendiri","68101":"Pembelian/penjualan/penyewaan harta kediaman"}},{"fe":"ahmadmaliki","penyelia":"ahmadmaliki","subsektor":"Hartanah","jumlah_kes":38,"fasa2":34,"fasa3":4,"daerah_utama":"Petaling","saiz":{"Mikro":31,"Kecil":7},"ssm":{"ROC":30,"Blank":7,"ROB":1},"total_revenue":114138103.44,"avg_revenue":3003634.3,"kes_ada_revenue":38,"msic_top":{"68210":22,"68291":6,"68292":5},"msic_top_ket":{"68210":"Perkhidmatan perantaraan harta tanah","68291":"Pengurusan harta tanah","68292":"Perkhidmatan penilaian harta tanah"}}];
+
+// ══════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════
+const fN=v=>v.toLocaleString('ms-MY');
+const fRM=v=>v>=1e9?`RM ${(v/1e9).toFixed(2)}B`:v>=1e6?`RM ${(v/1e6).toFixed(1)}M`:`RM ${v.toLocaleString()}`;
+const CH=['#3B82F6','#10B981','#8B5CF6','#F59E0B','#EF4444','#06B6D4','#F97316','#EC4899','#14B8A6','#84CC16'];
+const cOpts=(extra={})=>({
+  responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{labels:{color:'#94A3B8',font:{family:'Plus Jakarta Sans',size:10},padding:10},position:'bottom'},
+    tooltip:{backgroundColor:'#0B1120',borderColor:'#233055',borderWidth:1,titleFont:{family:'JetBrains Mono',size:11},bodyFont:{family:'Plus Jakarta Sans',size:11},padding:10},...(extra.plugins||{})},
+  scales:{x:{grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#94A3B8',font:{family:'Plus Jakarta Sans',size:10}}},
+    y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#94A3B8',font:{family:'JetBrains Mono',size:10}}},...(extra.scales||{})},...extra
+});
+const cx={};
+function mk(id,type,data,opts){if(cx[id])cx[id].destroy();cx[id]=new Chart(document.getElementById(id),{type,data,options:opts});return cx[id]}
+
+// ══════════════════════════════════════════════
+// TAB NAVIGATION
+// ══════════════════════════════════════════════
+const inited={};
+function goTab(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('pg-'+id).classList.add('active');
+  el.classList.add('active');
+  if(!inited[id]){inited[id]=true;initPage(id);}
+}
+function initPage(id){
+  if(id==='overview')initOv();
+  else if(id==='drilldown')initDD();
+  else if(id==='daerah')initDaerah();
+  else if(id==='ssm')initSSM();
+  else if(id==='saiz')initSaiz();
+  else if(id==='msic')initMSIC();
+  else if(id==='revenue')initRev();
+  else if(id==='ringkasan')initRs();
+  else if(id==='detail')initDet();
+}
+
+// ══════════════════════════════════════════════
+// OVERVIEW
+// ══════════════════════════════════════════════
+function initOv(){
+  mk('c-ov-sub','doughnut',{labels:['Runcit (337)','Hartanah (308)'],datasets:[{data:[25019,6472],backgroundColor:['#10B981','#3B82F6'],borderWidth:2,borderColor:'#0B1120',hoverBorderColor:'#233055'}]},{...cOpts(),...{cutout:'68%'}});
+  mk('c-ov-fasa','doughnut',{labels:['Fasa 2','Fasa 3'],datasets:[{data:[26899,4592],backgroundColor:['#8B5CF6','#F59E0B'],borderWidth:2,borderColor:'#0B1120'}]},{...cOpts(),...{cutout:'68%'}});
+  mk('c-ov-cross','bar',{
+    labels:['Fasa 2','Fasa 3'],
+    datasets:[
+      {label:'Hartanah (308)',data:[5863,609],backgroundColor:'#3B82F6',borderRadius:4},
+      {label:'Runcit (337)',data:[21036,3983],backgroundColor:'#10B981',borderRadius:4}
+    ]
+  },cOpts({scales:{x:{stacked:true,grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#94A3B8'}},y:{stacked:true,ticks:{callback:v=>fN(v)}}}}));
+  mk('c-ov-pen','bar',{
+    labels:['ahmadmaliki','nursyuzalawaty','suhaina.wahab'],
+    datasets:[
+      {label:'Hartanah',data:[6472,0,0],backgroundColor:'#3B82F6',borderRadius:3},
+      {label:'Runcit',data:[0,12510,12509],backgroundColor:'#10B981',borderRadius:3}
+    ]
+  },cOpts({scales:{x:{stacked:true,grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#94A3B8',font:{size:9}}},y:{stacked:true,ticks:{callback:v=>fN(v)}}}}));
+}
+
+// ══════════════════════════════════════════════
+// DRILL-DOWN
+// ══════════════════════════════════════════════
+let ds={level:'root',fasa:null,sub:null,penyelia:null};
+function initDD(){renderDD()}
+function renderDD(){
+  // Breadcrumb
+  let bch=`<span class="bc-item ${ds.level==='root'?'cur':''}" onclick="ddTo('root')">Semua Fasa</span>`;
+  if(ds.fasa) bch+=`<span class="bc-sep">›</span><span class="bc-item ${ds.level==='fasa'?'cur':''}" onclick="ddTo('fasa')">${ds.fasa}</span>`;
+  if(ds.sub)  bch+=`<span class="bc-sep">›</span><span class="bc-item ${ds.level==='sub'?'cur':''}" onclick="ddTo('sub')">${ds.sub} (${ds.sub==='Hartanah'?'308':'337'})</span>`;
+  if(ds.penyelia) bch+=`<span class="bc-sep">›</span><span class="bc-item cur">${ds.penyelia}</span>`;
+  document.getElementById('bc').innerHTML=bch;
+  document.getElementById('dd-back').style.display=ds.level==='root'?'none':'inline-flex';
+
+  const cont=document.getElementById('dd-content');
+  if(ds.level==='root'){
+    document.getElementById('dd-lbl').textContent='Pilih Fasa untuk mula drill-down';
+    let h='<div class="drill-grid">';
+    ['Fasa 2','Fasa 3'].forEach(f=>{
+      const d=D.drilldown[f],pct=Math.round(d.count/31491*100),c=f==='Fasa 2'?'#8B5CF6':'#F59E0B';
+      h+=`<div class="dc" onclick="ddTo('fasa','${f}')"><div class="dc-lbl">${f}</div><div class="dc-val" style="color:${c}">${fN(d.count)}</div><div class="dc-sub">Bilangan Kes · ${pct}% daripada jumlah</div><div class="dc-bar"><div class="dc-bar-fill" style="width:${pct}%;background:${c}"></div></div></div>`;
+    });
+    h+='</div>';
+    cont.innerHTML=h;
+    ddChart('root');
+  } else if(ds.level==='fasa'){
+    document.getElementById('dd-lbl').textContent=`${ds.fasa} — Pilih Subsektor`;
+    const fd=D.drilldown[ds.fasa];
+    let h='<div class="drill-grid">';
+    Object.entries(fd.subsektors).forEach(([sub,sd])=>{
+      const isH=sub==='Hartanah',c=isH?'#3B82F6':'#10B981',pct=Math.round(sd.count/fd.count*100);
+      h+=`<div class="dc" onclick="ddTo('sub','${ds.fasa}','${sub}')"><div class="dc-lbl">${sub} (${isH?'308':'337'})</div><div class="dc-val" style="color:${c}">${fN(sd.count)}</div><div class="dc-sub">${pct}% dalam ${ds.fasa}</div><div class="dc-bar"><div class="dc-bar-fill" style="width:${pct}%;background:${c}"></div></div></div>`;
+    });
+    h+='</div>';
+    cont.innerHTML=h;
+    ddChart('fasa');
+  } else if(ds.level==='sub'){
+    document.getElementById('dd-lbl').textContent=`${ds.fasa} › ${ds.sub} — Pilih Penyelia`;
+    const sd=D.drilldown[ds.fasa].subsektors[ds.sub];
+    const pcs=['#3B82F6','#10B981','#F59E0B'];
+    let h='<div class="drill-grid">';
+    Object.entries(sd.penyelias).forEach(([pen,pd],i)=>{
+      const pct=Math.round(pd.count/sd.count*100);
+      h+=`<div class="dc" onclick="ddTo('penyelia','${ds.fasa}','${ds.sub}','${pen}')"><div class="dc-lbl">Penyelia</div><div class="dc-val" style="color:${pcs[i]};font-size:15px;">${pen}</div><div class="dc-sub">${fN(pd.count)} kes · ${pct}%</div><div class="dc-bar"><div class="dc-bar-fill" style="width:${pct}%;background:${pcs[i]}"></div></div></div>`;
+    });
+    h+='</div>';
+    cont.innerHTML=h;
+    ddChart('sub');
+  } else {
+    document.getElementById('dd-lbl').textContent=`ID FE di bawah ${ds.penyelia}`;
+    const pd=D.drilldown[ds.fasa].subsektors[ds.sub].penyelias[ds.penyelia];
+    const isH=ds.sub==='Hartanah',c=isH?'#3B82F6':'#10B981';
+    let h=`<div style="font-size:11px;color:var(--txt2);margin-bottom:8px;">${fN(pd.count)} kes diurus</div><div class="fe-list">`;
+    pd.fe_list.forEach((f,i)=>{
+      const pct=Math.round(f.count/pd.count*100);
+      h+=`<div class="fe-row"><div class="fe-rank">${i+1}</div><div class="fe-id">${f.fe}</div><div style="flex:1;margin:0 8px"><div style="height:3px;background:var(--rim);border-radius:2px;overflow:hidden"><div style="height:3px;width:${pct}%;background:${c};border-radius:2px"></div></div></div><div class="fe-ct">${fN(f.count)} kes</div></div>`;
+    });
+    h+='</div>';
+    cont.innerHTML=h;
+    ddChart('penyelia');
+  }
+}
+function ddChart(level){
+  let lbl=[],dat=[],col=[];
+  if(level==='root'){lbl=['Fasa 2','Fasa 3'];dat=[26899,4592];col=['#8B5CF6','#F59E0B'];document.getElementById('dd-chart-lbl').textContent='Bilangan Kes mengikut Fasa';}
+  else if(level==='fasa'){Object.entries(D.drilldown[ds.fasa].subsektors).forEach(([s,sd])=>{lbl.push(s+(s==='Hartanah'?' (308)':' (337)'));dat.push(sd.count);col.push(s==='Hartanah'?'#3B82F6':'#10B981')});document.getElementById('dd-chart-lbl').textContent=`${ds.fasa} — Pecahan Subsektor`;}
+  else if(level==='sub'){Object.entries(D.drilldown[ds.fasa].subsektors[ds.sub].penyelias).forEach(([p,pd],i)=>{lbl.push(p);dat.push(pd.count);col.push(['#3B82F6','#10B981','#F59E0B'][i])});document.getElementById('dd-chart-lbl').textContent=`${ds.fasa} › ${ds.sub} — Pecahan Penyelia`;}
+  else{const pd=D.drilldown[ds.fasa].subsektors[ds.sub].penyelias[ds.penyelia];const c=ds.sub==='Hartanah'?'#3B82F6':'#10B981';pd.fe_list.slice(0,12).forEach(f=>{lbl.push(f.fe.replace('FESelangor','FE'));dat.push(f.count);col.push(c)});document.getElementById('dd-chart-lbl').textContent=`${ds.penyelia} — Bilangan Kes per ID FE`;}
+  mk('c-dd','bar',{labels:lbl,datasets:[{label:'Bilangan Kes',data:dat,backgroundColor:col,borderRadius:5}]},cOpts({scales:{y:{ticks:{callback:v=>fN(v)}}}}));
+}
+function ddTo(level,fasa,sub,pen){ds={level,fasa:fasa||null,sub:sub||null,penyelia:pen||null};renderDD()}
+function ddBack(){const lvl=['root','fasa','sub','penyelia'];const i=lvl.indexOf(ds.level);if(i<=0)return;ds.level=lvl[i-1];if(ds.level==='root'){ds.fasa=null;ds.sub=null;ds.penyelia=null}else if(ds.level==='fasa'){ds.sub=null;ds.penyelia=null}else if(ds.level==='sub'){ds.penyelia=null}renderDD()}
+
+// ══════════════════════════════════════════════
+// DAERAH
+// ══════════════════════════════════════════════
+function initDaerah(){
+  const dr=Object.keys(D.daerah.Semua),dv=Object.values(D.daerah.Semua);
+  mk('c-daerah-all','bar',{labels:dr,datasets:[{label:'Bilangan Kes',data:dv,backgroundColor:CH,borderRadius:6}]},cOpts({scales:{y:{ticks:{callback:v=>fN(v)}}}}));
+  mk('c-daerah-cmp','bar',{labels:dr,datasets:[
+    {label:'Hartanah',data:dr.map(k=>D.daerah.Hartanah[k]||0),backgroundColor:'#3B82F6',borderRadius:4},
+    {label:'Runcit',data:dr.map(k=>D.daerah.Runcit[k]||0),backgroundColor:'#10B981',borderRadius:4}
+  ]},cOpts({scales:{y:{ticks:{callback:v=>fN(v)}}}}));
+  mk('c-daerah-h','doughnut',{labels:dr,datasets:[{data:dr.map(k=>D.daerah.Hartanah[k]||0),backgroundColor:CH,borderWidth:2,borderColor:'#0B1120'}]},{...cOpts(),...{cutout:'65%'}});
+  mk('c-daerah-r','doughnut',{labels:dr,datasets:[{data:dr.map(k=>D.daerah.Runcit[k]||0),backgroundColor:['#10B981','#34D399','#6EE7B7','#A7F3D0'],borderWidth:2,borderColor:'#0B1120'}]},{...cOpts(),...{cutout:'65%'}});
+}
+
+// ══════════════════════════════════════════════
+// SSM
+// ══════════════════════════════════════════════
+function initSSM(){
+  const ssmK=['ROC','ROB','LLP','Blank'],ssmC=['#3B82F6','#10B981','#8B5CF6','#64748B'];
+  mk('c-ssm-all','doughnut',{labels:ssmK,datasets:[{data:ssmK.map(k=>D.ssm[k]||0),backgroundColor:ssmC,borderWidth:2,borderColor:'#0B1120'}]},{...cOpts(),...{cutout:'65%'}});
+  mk('c-ssm-h','doughnut',{labels:ssmK,datasets:[{data:ssmK.map(k=>D.ssm_by_sub.Hartanah[k]||0),backgroundColor:ssmC,borderWidth:2,borderColor:'#0B1120'}]},{...cOpts(),...{cutout:'65%'}});
+  mk('c-ssm-r','doughnut',{labels:ssmK,datasets:[{data:ssmK.map(k=>D.ssm_by_sub.Runcit[k]||0),backgroundColor:ssmC,borderWidth:2,borderColor:'#0B1120'}]},{...cOpts(),...{cutout:'65%'}});
+  // 100% stacked
+  const subs=['Hartanah','Runcit'];
+  const totH=ssmK.reduce((a,k)=>a+(D.ssm_by_sub.Hartanah[k]||0),0);
+  const totR=ssmK.reduce((a,k)=>a+(D.ssm_by_sub.Runcit[k]||0),0);
+  mk('c-ssm-stk','bar',{labels:subs,datasets:ssmK.map((k,i)=>({label:k,data:[
+    (D.ssm_by_sub.Hartanah[k]||0)/totH*100,(D.ssm_by_sub.Runcit[k]||0)/totR*100
+  ],backgroundColor:ssmC[i],borderRadius:2}))},cOpts({scales:{x:{stacked:true,grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#94A3B8'}},y:{stacked:true,ticks:{callback:v=>`${v.toFixed(0)}%`}}}}));
+  // By fasa
+  const fasas=['Fasa 2','Fasa 3'];
+  mk('c-ssm-fasa','bar',{labels:fasas,datasets:ssmK.map((k,i)=>({label:k,data:fasas.map(f=>D.ssm_by_fasa[f][k]||0),backgroundColor:ssmC[i],borderRadius:3}))},cOpts({scales:{x:{stacked:true,grid:{color:'rgba(255,255,255,0.03)'}},y:{stacked:true,ticks:{callback:v=>fN(v)}}}}));
+}
+
+// ══════════════════════════════════════════════
+// SAIZ
+// ══════════════════════════════════════════════
+function initSaiz(){
+  const sk=['Mikro','Kecil','Sederhana','Besar','Tidak Diketahui'];
+  const sc=['#3B82F6','#10B981','#F59E0B','#EF4444','#64748B'];
+  mk('c-saiz-all','bar',{labels:sk,datasets:[{label:'Bilangan',data:sk.map(k=>D.saiz[k]||0),backgroundColor:sc,borderRadius:6}]},cOpts({scales:{y:{ticks:{callback:v=>fN(v)}}},plugins:{legend:{display:false}}}));
+  // Treemap simulation with canvas
+  buildTreemap();
+  mk('c-saiz-h','doughnut',{labels:sk,datasets:[{data:sk.map(k=>D.saiz_by_sub.Hartanah[k]||0),backgroundColor:sc,borderWidth:2,borderColor:'#0B1120'}]},{...cOpts(),...{cutout:'60%'}});
+  mk('c-saiz-r','doughnut',{labels:sk,datasets:[{data:sk.map(k=>D.saiz_by_sub.Runcit[k]||0),backgroundColor:sc,borderWidth:2,borderColor:'#0B1120'}]},{...cOpts(),...{cutout:'60%'}});
+  const totH=sk.reduce((a,k)=>a+(D.saiz_by_sub.Hartanah[k]||0),0);
+  const totR=sk.reduce((a,k)=>a+(D.saiz_by_sub.Runcit[k]||0),0);
+  mk('c-saiz-stk','bar',{labels:['Hartanah','Runcit'],datasets:sk.map((k,i)=>({label:k,data:[(D.saiz_by_sub.Hartanah[k]||0)/totH*100,(D.saiz_by_sub.Runcit[k]||0)/totR*100],backgroundColor:sc[i],borderRadius:2}))},cOpts({scales:{x:{stacked:true,grid:{color:'rgba(255,255,255,0.03)'}},y:{stacked:true,ticks:{callback:v=>`${v.toFixed(0)}%`}}}}));
+}
+function buildTreemap(){
+  const wrap=document.getElementById('treemap-wrap');
+  const sk=[{k:'Mikro',v:26085,c:'#3B82F6'},{k:'Kecil',v:5192,c:'#10B981'},{k:'Sederhana',v:107,c:'#F59E0B'},{k:'Besar',v:25,c:'#EF4444'},{k:'Tidak Diketahui',v:82,c:'#64748B'}];
+  const total=sk.reduce((a,s)=>a+s.v,0);
+  const W=wrap.offsetWidth||500,H=280;
+  let x=0,html='';
+  sk.forEach(s=>{
+    const w=Math.max(Math.round(s.v/total*W),2);
+    const pct=(s.v/total*100).toFixed(1);
+    html+=`<div style="position:absolute;left:${x}px;top:0;width:${w}px;height:${H}px;background:${s.c}22;border-right:1px solid ${s.c}44;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;transition:background .2s;cursor:default" onmouseover="this.style.background='${s.c}44'" onmouseout="this.style.background='${s.c}22'">
+      <div style="font-size:${w>60?13:9}px;font-weight:700;color:${s.c};font-family:var(--mono)">${w>30?s.k:''}</div>
+      <div style="font-size:${w>60?20:11}px;font-weight:800;color:${s.c};font-family:var(--mono)">${w>50?fN(s.v):''}</div>
+      <div style="font-size:9px;color:#94A3B8">${w>60?pct+'%':''}</div>
+    </div>`;
+    x+=w;
+  });
+  wrap.innerHTML=html;
+  // Legend below treemap
+  let leg='<div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;justify-content:center;">';
+  sk.forEach(s=>leg+=`<span style="font-size:10px;color:#94A3B8;display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:${s.c};display:inline-block"></span>${s.k}: ${fN(s.v)}</span>`);
+  leg+='</div>';
+  wrap.insertAdjacentHTML('afterend',leg);
+}
+
+// ══════════════════════════════════════════════
+// MSIC
+// ══════════════════════════════════════════════
+function initMSIC(){
+  renderMsicList('h');
+  renderMsicList('r');
+  buildMsicChart('h');
+  buildMsicChart('r');
+}
+function renderMsicList(sub){
+  const data=sub==='h'?D.msic.Hartanah:D.msic.Runcit;
+  const maxCt=data[0].count,c=sub==='h'?'#3B82F6':'#10B981';
+  let h='';
+  data.forEach((m,i)=>{
+    const pct=Math.round(m.count/maxCt*100);
+    h+=`<div class="msic-row">
+      <div class="msic-kod">${m.kod}</div>
+      <div class="msic-ket">${m.ket}</div>
+      <div class="msic-bar"><div class="msic-bar-fill" style="width:${pct}%;background:${c}"></div></div>
+      <div class="msic-ct">${fN(m.count)}</div>
+    </div>`;
+  });
+  document.getElementById(`msic-${sub}-list`).innerHTML=h;
+}
+function buildMsicChart(sub){
+  const data=sub==='h'?D.msic.Hartanah:D.msic.Runcit;
+  const c=sub==='h'?'#3B82F6':'#10B981';
+  const lbl=data.map(m=>m.kod);
+  mk(`c-msic-${sub}`,'bar',{labels:lbl,datasets:[{label:'Bilangan Kes',data:data.map(m=>m.count),backgroundColor:data.map((_,i)=>i===0?c:c+'88'),borderRadius:5}]},cOpts({indexAxis:'y',scales:{y:{ticks:{color:'#94A3B8',font:{family:'JetBrains Mono',size:10}}},x:{ticks:{callback:v=>fN(v)}},plugins:{legend:{display:false}}}}));
+}
+function showMsic(sub,el){
+  document.getElementById('msic-h-wrap').style.display=sub==='h'?'block':'none';
+  document.getElementById('msic-r-wrap').style.display=sub==='r'?'block':'none';
+  document.querySelectorAll('#msic-tgl .tgl-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ══════════════════════════════════════════════
+// REVENUE
+// ══════════════════════════════════════════════
+function initRev(){buildRevTbl('h');buildRevTbl('r')}
+function showRev(t){
+  ['h','r'].forEach(x=>{document.getElementById('rev-'+x).style.display=x===t?'block':'none';document.getElementById('rev-t-'+x).classList.toggle('active',x===t)});
+}
+function buildRevTbl(sub){
+  const data=sub==='h'?D.top_hartanah:D.top_runcit;
+  const maxRev=data[0].revenue,c=sub==='h'?'#3B82F6':'#10B981';
+  let h=`<div class="tbl-wrap"><table><thead><tr><th class="center">#</th><th>${sub==='h'?'Syarikat Hartanah':'Syarikat Runcit/Borong'}</th><th>Revenue</th><th class="center">Cawangan</th><th>Penyelia</th><th>ID FE</th><th>Daerah</th></tr></thead><tbody>`;
+  data.forEach(r=>{
+    const rb=r.rank===1?'g':r.rank===2?'s':r.rank===3?'b':'';
+    const pct=r.revenue/maxRev*100;
+    h+=`<tr><td class="center"><span class="rb ${rb}">${r.rank}</span></td>
+      <td style="font-weight:600;font-size:12px;max-width:240px">${r.name}</td>
+      <td class="mono"><div class="rev-bar"><span style="color:${c};white-space:nowrap">${fRM(r.revenue)}</span><div class="rev-track"><div class="rev-fill" style="width:${pct.toFixed(0)}%;background:${c}"></div></div></div></td>
+      <td class="center mono">${r.cawangan}</td>
+      <td style="font-size:11px;color:var(--txt2)">${r.penyelia}</td>
+      <td style="font-size:10px;color:var(--txt3)">${r.fe}</td>
+      <td style="font-size:11px;color:var(--txt3)">${r.daerah}</td></tr>`;
+  });
+  h+='</tbody></table></div>';
+  document.getElementById('rev-'+sub).innerHTML=h;
+}
+
+// ══════════════════════════════════════════════
+// RINGKASAN
+// ══════════════════════════════════════════════
+function initRs(){
+  ['Hartanah','Runcit'].forEach(sub=>{
+    const id=sub==='Hartanah'?'rs-pen-h':'rs-pen-r';
+    const data=D.penyelia_by_sub[sub];
+    let h='<div class="tbl-wrap"><table><thead><tr><th>Penyelia</th><th class="center">Jumlah Kes</th><th class="center">Jumlah FE</th></tr></thead><tbody>';
+    data.forEach(p=>{h+=`<tr><td style="font-weight:600">${p.penyelia}</td><td class="center mono">${fN(p.count)}</td><td class="center mono">${p.fe_list.length}</td></tr>`});
+    h+='</tbody></table></div>';
+    document.getElementById(id).innerHTML=h;
+  });
+  ['Hartanah','Runcit'].forEach(sub=>{
+    const id=sub==='Hartanah'?'rs-fe-h':'rs-fe-r';
+    const data=D.penyelia_by_sub[sub];
+    let allFE=[];
+    data.forEach(p=>p.fe_list.forEach(f=>allFE.push({...f,penyelia:p.penyelia})));
+    allFE.sort((a,b)=>b.count-a.count);
+    const c=sub==='Hartanah'?'#3B82F6':'#10B981';
+    const maxCt=allFE[0]?.count||1;
+    let h='<div class="tbl-wrap"><table><thead><tr><th>#</th><th>ID FE</th><th>Penyelia</th><th class="center">Bilangan Kes</th><th>Taburan</th></tr></thead><tbody>';
+    allFE.forEach((f,i)=>{
+      const pct=Math.round(f.count/maxCt*100);
+      h+=`<tr><td class="mono center" style="color:var(--txt3)">${i+1}</td><td style="font-weight:500;font-size:11px">${f.fe}</td><td style="font-size:10px;color:var(--txt2)">${f.penyelia}</td><td class="center mono">${fN(f.count)}</td>
+        <td><div class="rev-track" style="width:100px"><div class="rev-fill" style="width:${pct}%;background:${c}"></div></div></td></tr>`;
+    });
+    h+='</tbody></table></div>';
+    document.getElementById(id).innerHTML=h;
+  });
+}
+function showRs(t){
+  document.getElementById('rs-pen-wrap').style.display=t==='pen'?'flex':'none';
+  document.getElementById('rs-fe-wrap').style.display=t==='fe'?'block':'none';
+  document.getElementById('rs-t-pen').classList.toggle('active',t==='pen');
+  document.getElementById('rs-t-fe').classList.toggle('active',t==='fe');
+}
+
+// ══════════════════════════════════════════════
+// ID FE SUMMARY (DATA SEBENAR — 35 FE)
+// ══════════════════════════════════════════════
+let feFiltered=[...D.fe_summary];
+function initDet(){fdet()}
+
+function fdet(){
+  const q=(document.getElementById('d-srch').value||'').toLowerCase();
+  const sb=document.getElementById('d-sub').value;
+  const pe=document.getElementById('d-pen').value;
+  feFiltered=D.fe_summary.filter(r=>{
+    if(q&&!r.fe.toLowerCase().includes(q)&&!r.penyelia.toLowerCase().includes(q))return false;
+    if(sb&&r.subsektor!==sb)return false;
+    if(pe&&r.penyelia!==pe)return false;
+    return true;
+  });
+  document.getElementById('d-ct').textContent=`${feFiltered.length} ID FE`;
+  renderFEKPI();
+  renderFECharts();
+  renderFECards();
+}
+
+function renderFEKPI(){
+  const total=feFiltered.reduce((a,f)=>a+f.jumlah_kes,0);
+  const totalRev=feFiltered.reduce((a,f)=>a+f.total_revenue,0);
+  const avgKes=feFiltered.length?Math.round(total/feFiltered.length):0;
+  const maxKes=feFiltered.length?Math.max(...feFiltered.map(f=>f.jumlah_kes)):0;
+  const minKes=feFiltered.length?Math.min(...feFiltered.map(f=>f.jumlah_kes)):0;
+  document.getElementById('fe-kpi-row').innerHTML=`
+    <div class="kpi c-acc"><div class="kpi-lbl">ID FE Ditapis</div><div class="kpi-val white">${feFiltered.length}</div><div class="kpi-sub">daripada 35 FE</div></div>
+    <div class="kpi c-acc"><div class="kpi-lbl">Jumlah Kes</div><div class="kpi-val c-acc">${fN(total)}</div><div class="kpi-sub">kes keseluruhan</div></div>
+    <div class="kpi c-h"><div class="kpi-lbl">Purata Kes / FE</div><div class="kpi-val c-h">${fN(avgKes)}</div><div class="kpi-sub">kes per enumerator</div></div>
+    <div class="kpi c-r"><div class="kpi-lbl">Total Revenue</div><div class="kpi-val c-r">${fRM(totalRev)}</div><div class="kpi-sub">berdasarkan data ada</div></div>
+    <div class="kpi c-f2"><div class="kpi-lbl">FE Tertinggi Kes</div><div class="kpi-val c-f2">${fN(maxKes)}</div><div class="kpi-sub">bilangan kes terbanyak</div></div>
+    <div class="kpi c-f3"><div class="kpi-lbl">FE Terendah Kes</div><div class="kpi-val c-f3">${fN(minKes)}</div><div class="kpi-sub">bilangan kes terkurang</div></div>
+  `;
+}
+
+function renderFECharts(){
+  if(!feFiltered.length)return;
+  const sorted=[...feFiltered].sort((a,b)=>b.jumlah_kes-a.jumlah_kes);
+  const lbls=sorted.map(f=>f.fe.replace('FESelangor','FE'));
+  const cols=sorted.map(f=>f.subsektor==='Hartanah'?'#3B82F6':'#10B981');
+  mk('c-fe-kes','bar',{labels:lbls,datasets:[{label:'Bilangan Kes',data:sorted.map(f=>f.jumlah_kes),backgroundColor:cols,borderRadius:4}]},
+    cOpts({plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>fN(v)}},x:{ticks:{font:{size:9},color:'#94A3B8'}}}}));
+
+  const sortedRev=[...feFiltered].sort((a,b)=>b.total_revenue-a.total_revenue);
+  const lblsR=sortedRev.map(f=>f.fe.replace('FESelangor','FE'));
+  const colsR=sortedRev.map(f=>f.subsektor==='Hartanah'?'#3B82F6':'#10B981');
+  mk('c-fe-rev','bar',{labels:lblsR,datasets:[{label:'Revenue (RM B)',data:sortedRev.map(f=>+(f.total_revenue/1e9).toFixed(2)),backgroundColor:colsR,borderRadius:4}]},
+    cOpts({plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>`RM ${v.toFixed(1)}B`}},x:{ticks:{font:{size:9},color:'#94A3B8'}}}}));
+}
+
+function renderFECards(){
+  const penClr={nursyuzalawaty:'#3B82F6',suhaina_wahab:'#10B981','suhaina.wahab':'#10B981',ahmadmaliki:'#F59E0B'};
+  let h='';
+  feFiltered.forEach(f=>{
+    const isH=f.subsektor==='Hartanah';
+    const c=isH?'#3B82F6':'#10B981';
+    const pc=penClr[f.penyelia]||'#94A3B8';
+    const saizKeys=Object.keys(f.saiz),ssmKeys=Object.keys(f.ssm);
+    const totalSaiz=saizKeys.reduce((a,k)=>a+f.saiz[k],0);
+    const totalSSM=ssmKeys.reduce((a,k)=>a+f.ssm[k],0);
+    const msicKeys=Object.keys(f.msic_top);
+    const revCov=f.jumlah_kes?Math.round(f.kes_ada_revenue/f.jumlah_kes*100):0;
+    const f2pct=f.jumlah_kes?Math.round(f.fasa2/f.jumlah_kes*100):0;
+    const f3pct=100-f2pct;
+
+    h+=`<div style="background:var(--card);border:1px solid var(--rim);border-radius:12px;padding:16px;margin-bottom:12px;border-left:3px solid ${c}">
+      <!-- Header -->
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+        <div>
+          <div style="font-size:14px;font-weight:700;font-family:var(--mono);color:${c}">${f.fe}</div>
+          <div style="font-size:11px;color:var(--txt2);margin-top:3px">
+            <span style="color:${pc};font-weight:600">${f.penyelia}</span>
+            &nbsp;·&nbsp;<span class="tag ${isH?'h':'r'}">${f.subsektor}</span>
+            &nbsp;·&nbsp;<span style="color:var(--txt3)">${f.daerah_utama}</span>
+          </div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:22px;font-weight:800;font-family:var(--mono);color:${c}">${fN(f.jumlah_kes)}</div>
+          <div style="font-size:10px;color:var(--txt3)">jumlah kes</div>
+        </div>
+      </div>
+
+      <!-- Stats grid -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:12px">
+        <div style="background:var(--ink3);border-radius:8px;padding:10px">
+          <div style="font-size:10px;color:var(--txt3);margin-bottom:4px;font-weight:600;letter-spacing:.04em">FASA 2</div>
+          <div style="font-size:16px;font-weight:700;font-family:var(--mono);color:#A78BFA">${fN(f.fasa2)}</div>
+          <div style="font-size:10px;color:var(--txt3)">${f2pct}% daripada kes</div>
+        </div>
+        <div style="background:var(--ink3);border-radius:8px;padding:10px">
+          <div style="font-size:10px;color:var(--txt3);margin-bottom:4px;font-weight:600;letter-spacing:.04em">FASA 3</div>
+          <div style="font-size:16px;font-weight:700;font-family:var(--mono);color:#F59E0B">${fN(f.fasa3)}</div>
+          <div style="font-size:10px;color:var(--txt3)">${f3pct}% daripada kes</div>
+        </div>
+        <div style="background:var(--ink3);border-radius:8px;padding:10px">
+          <div style="font-size:10px;color:var(--txt3);margin-bottom:4px;font-weight:600;letter-spacing:.04em">TOTAL REVENUE</div>
+          <div style="font-size:14px;font-weight:700;font-family:var(--mono);color:${c}">${fRM(f.total_revenue)}</div>
+          <div style="font-size:10px;color:var(--txt3)">Liputan: ${revCov}% kes</div>
+        </div>
+        <div style="background:var(--ink3);border-radius:8px;padding:10px">
+          <div style="font-size:10px;color:var(--txt3);margin-bottom:4px;font-weight:600;letter-spacing:.04em">AVG REVENUE</div>
+          <div style="font-size:14px;font-weight:700;font-family:var(--mono);color:${c}">${fRM(f.avg_revenue)}</div>
+          <div style="font-size:10px;color:var(--txt3)">per kes</div>
+        </div>
+      </div>
+
+      <!-- Saiz & SSM & MSIC -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;flex-wrap:wrap">
+        <!-- Saiz -->
+        <div style="background:var(--ink3);border-radius:8px;padding:10px">
+          <div style="font-size:10px;color:var(--txt3);font-weight:600;letter-spacing:.04em;margin-bottom:8px">SAIZ SYARIKAT</div>
+          ${saizKeys.map(k=>{
+            const pct=Math.round(f.saiz[k]/totalSaiz*100);
+            const sc={'Mikro':'#3B82F6','Kecil':'#10B981','Sederhana':'#F59E0B','Besar':'#EF4444','Tidak Diketahui':'#64748B'};
+            return `<div style="margin-bottom:5px">
+              <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px"><span style="color:var(--txt2)">${k}</span><span style="color:${sc[k]||'#94A3B8'};font-family:var(--mono)">${fN(f.saiz[k])}</span></div>
+              <div style="height:3px;background:var(--rim);border-radius:2px;overflow:hidden"><div style="height:3px;width:${pct}%;background:${sc[k]||'#94A3B8'};border-radius:2px"></div></div>
+            </div>`;
+          }).join('')}
+        </div>
+        <!-- SSM -->
+        <div style="background:var(--ink3);border-radius:8px;padding:10px">
+          <div style="font-size:10px;color:var(--txt3);font-weight:600;letter-spacing:.04em;margin-bottom:8px">JENIS SSM</div>
+          ${ssmKeys.map(k=>{
+            const pct=Math.round(f.ssm[k]/totalSSM*100);
+            const sc={'ROC':'#3B82F6','ROB':'#10B981','LLP':'#8B5CF6','Blank':'#64748B'};
+            return `<div style="margin-bottom:5px">
+              <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px"><span style="color:var(--txt2)">${k}</span><span style="color:${sc[k]||'#94A3B8'};font-family:var(--mono)">${fN(f.ssm[k])}</span></div>
+              <div style="height:3px;background:var(--rim);border-radius:2px;overflow:hidden"><div style="height:3px;width:${pct}%;background:${sc[k]||'#94A3B8'};border-radius:2px"></div></div>
+            </div>`;
+          }).join('')}
+        </div>
+        <!-- MSIC Top -->
+        <div style="background:var(--ink3);border-radius:8px;padding:10px">
+          <div style="font-size:10px;color:var(--txt3);font-weight:600;letter-spacing:.04em;margin-bottom:8px">TOP MSIC 2025</div>
+          ${msicKeys.slice(0,3).map((k,i)=>`<div style="margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid var(--rim)">
+            <div style="font-size:10px;font-family:var(--mono);color:var(--acc);font-weight:600">${k} <span style="color:var(--txt2);font-family:var(--sans)">(${fN(f.msic_top[k])} kes)</span></div>
+            <div style="font-size:10px;color:var(--txt2);margin-top:2px;line-height:1.3">${f.msic_top_ket[k]||''}</div>
+          </div>`).join('')}
+        </div>
+      </div>
+
+      <!-- Fasa bar visual -->
+      <div style="margin-top:10px">
+        <div style="display:flex;height:6px;border-radius:3px;overflow:hidden;gap:1px">
+          <div style="width:${f2pct}%;background:#8B5CF6;border-radius:3px 0 0 3px" title="Fasa 2: ${fN(f.fasa2)}"></div>
+          <div style="width:${f3pct}%;background:#F59E0B;border-radius:0 3px 3px 0" title="Fasa 3: ${fN(f.fasa3)}"></div>
+        </div>
+        <div style="display:flex;gap:14px;margin-top:5px;font-size:10px;color:var(--txt3)">
+          <span style="color:#A78BFA">■ Fasa 2: ${fN(f.fasa2)} (${f2pct}%)</span>
+          <span style="color:#F59E0B">■ Fasa 3: ${fN(f.fasa3)} (${f3pct}%)</span>
+        </div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('fe-cards-wrap').innerHTML=h||'<div style="color:var(--txt3);font-size:12px;padding:20px">Tiada rekod ditemui.</div>';
+}
+
+function exportFE(){
+  const h='ID FE,Penyelia,Subsektor,Jumlah Kes,Fasa 2,Fasa 3,Daerah Utama,Total Revenue,Avg Revenue,Kes Ada Revenue,Mikro,Kecil,Sederhana,Besar,ROC,ROB,LLP,Blank\n';
+  const rows=feFiltered.map(f=>[
+    f.fe,f.penyelia,f.subsektor,f.jumlah_kes,f.fasa2,f.fasa3,f.daerah_utama,
+    f.total_revenue.toFixed(2),f.avg_revenue.toFixed(2),f.kes_ada_revenue,
+    f.saiz.Mikro||0,f.saiz.Kecil||0,f.saiz.Sederhana||0,f.saiz.Besar||0,
+    f.ssm.ROC||0,f.ssm.ROB||0,f.ssm.LLP||0,f.ssm.Blank||0
+  ].join(',')).join('\n');
+  const blob=new Blob([h+rows],{type:'text/csv'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ringkasan_id_fe.csv';a.click();
+}
+
+// Boot
+initPage('overview');
+</script>
+</body>
+</html>
