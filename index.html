@@ -205,9 +205,85 @@ tbody td{padding:8px 12px;color:var(--txt)}
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:var(--ink2)}
 ::-webkit-scrollbar-thumb{background:var(--rim2);border-radius:3px}
+
+/* ── PASSWORD GATE ── */
+#gate{
+  position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;padding:24px;
+  background:linear-gradient(135deg,var(--ink) 0%,var(--ink2) 50%,var(--ink3) 100%);overflow:hidden;
+}
+#gate::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 18% 22%,rgba(59,130,246,.14),transparent 42%),
+             radial-gradient(circle at 82% 78%,rgba(139,92,246,.13),transparent 45%);
+}
+#gate::after{
+  content:'';position:absolute;width:520px;height:520px;border-radius:50%;top:-180px;right:-150px;
+  background:radial-gradient(circle,rgba(56,189,248,.16),transparent 70%);filter:blur(8px);
+}
+#gate.gate-hide{opacity:0;visibility:hidden;transition:opacity .45s ease,visibility .45s ease}
+.gate-card{
+  position:relative;z-index:2;width:100%;max-width:410px;
+  background:rgba(21,30,48,.62);border:1px solid rgba(255,255,255,.10);border-radius:20px;
+  padding:38px 34px 30px;box-shadow:0 24px 70px rgba(0,0,0,.5);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);text-align:center;
+  animation:gateIn .5s cubic-bezier(.2,.8,.2,1);
+}
+@keyframes gateIn{from{opacity:0;transform:translateY(18px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+.gate-badge{
+  width:64px;height:64px;margin:0 auto 18px;border-radius:18px;
+  background:linear-gradient(135deg,var(--h),var(--f2));
+  display:flex;align-items:center;justify-content:center;font-size:30px;
+  box-shadow:0 10px 30px rgba(59,130,246,.4);
+}
+.gate-card h1{color:var(--txt);font-size:1.12rem;font-weight:800;letter-spacing:.02em;line-height:1.35}
+.gate-sub{color:var(--txt2);font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-top:8px;margin-bottom:26px;font-family:var(--mono)}
+.gate-input-wrap{
+  position:relative;display:flex;align-items:center;
+  background:rgba(11,17,32,.6);border:1px solid var(--rim2);border-radius:11px;padding:0 6px 0 14px;
+  transition:border-color .2s,box-shadow .2s;
+}
+.gate-input-wrap.focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(56,189,248,.15)}
+.gate-input-wrap.shake{animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+.gate-lock{font-size:1rem;opacity:.7;flex-shrink:0}
+#gate-pass{
+  flex:1;background:transparent;border:none;outline:none;color:var(--txt);
+  font-family:var(--mono);font-size:.95rem;letter-spacing:.12em;padding:13px 10px;
+}
+#gate-pass::placeholder{color:var(--txt3);letter-spacing:.04em;font-family:var(--sans)}
+.gate-eye{background:transparent;border:none;cursor:pointer;font-size:1rem;opacity:.55;padding:8px;transition:opacity .15s}
+.gate-eye:hover{opacity:1}
+.gate-btn{
+  width:100%;margin-top:16px;background:linear-gradient(135deg,var(--h),#1d4ed8);color:#fff;border:none;
+  border-radius:11px;padding:14px;font-family:var(--sans);font-size:.92rem;font-weight:700;letter-spacing:.02em;
+  cursor:pointer;transition:filter .2s,transform .1s;
+}
+.gate-btn:hover{filter:brightness(1.1)}
+.gate-btn:active{transform:scale(.98)}
+.gate-err{color:#fca5a5;font-size:.78rem;font-weight:600;margin-top:14px;min-height:18px;opacity:0;transition:opacity .2s}
+.gate-err.show{opacity:1}
+.gate-foot{margin-top:24px;padding-top:18px;border-top:1px solid rgba(255,255,255,.08);color:var(--txt3);font-size:.7rem;letter-spacing:.05em}
+.gate-foot span{font-family:var(--mono);color:var(--acc);opacity:.85}
 </style>
 </head>
 <body>
+
+<!-- PASSWORD GATE -->
+<div id="gate">
+  <div class="gate-card">
+    <div class="gate-badge">🔐</div>
+    <h1>OVERVIEW BANCI EKONOMI BE2026</h1>
+    <div class="gate-sub">Unit Harga-Harga &nbsp;·&nbsp; DOSM Selangor</div>
+    <div class="gate-input-wrap" id="gate-wrap">
+      <span class="gate-lock">🔒</span>
+      <input type="password" id="gate-pass" placeholder="Masukkan kata laluan" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <button type="button" class="gate-eye" id="gate-eye" title="Papar/sembunyi">👁</button>
+    </div>
+    <button type="button" class="gate-btn" id="gate-submit">Buka Dashboard →</button>
+    <div class="gate-err" id="gate-err"></div>
+    <div class="gate-foot">Akses Terhad &nbsp;·&nbsp; Fasa 2 &amp; 3 <span>UHH 2026</span></div>
+  </div>
+</div>
 
 <div class="topbar">
   <div class="topbar-row1">
@@ -1046,6 +1122,70 @@ function exportFE(){
 
 // Boot
 initPage('overview');
+
+// ══════════════════════════════════════════════
+// PASSWORD GATE
+// ══════════════════════════════════════════════
+(function(){
+  // Hash cyrb53 bagi kata laluan — kata laluan sebenar tidak disimpan dalam fail.
+  const GATE_HASH="5777457859756829";
+  const cyrb53=(str,seed=0)=>{
+    let h1=0xdeadbeef^seed,h2=0x41c6ce57^seed;
+    for(let i=0,ch;i<str.length;i++){
+      ch=str.charCodeAt(i);
+      h1=Math.imul(h1^ch,2654435761);
+      h2=Math.imul(h2^ch,1597334677);
+    }
+    h1=Math.imul(h1^(h1>>>16),2246822507);
+    h1^=Math.imul(h2^(h2>>>13),3266489909);
+    h2=Math.imul(h2^(h2>>>16),2246822507);
+    h2^=Math.imul(h1^(h1>>>13),3266489909);
+    return (4294967296*(2097151&h2)+(h1>>>0)).toString();
+  };
+  const gate=document.getElementById('gate');
+  const wrap=document.getElementById('gate-wrap');
+  const input=document.getElementById('gate-pass');
+  const submit=document.getElementById('gate-submit');
+  const err=document.getElementById('gate-err');
+  const eye=document.getElementById('gate-eye');
+  const KEY='be2026_overview_unlocked';
+
+  function unlock(skipStore){
+    try{if(!skipStore)sessionStorage.setItem(KEY,'1');}catch(e){}
+    gate.classList.add('gate-hide');
+    setTimeout(()=>{gate.style.display='none';},480);
+  }
+  function fail(){
+    err.textContent='Kata laluan salah. Sila cuba lagi.';
+    err.classList.add('show');
+    wrap.classList.add('shake');
+    input.value='';
+    setTimeout(()=>wrap.classList.remove('shake'),420);
+    input.focus();
+  }
+  function check(){
+    const v=input.value;
+    if(!v){input.focus();return;}
+    if(cyrb53(v)===GATE_HASH)unlock(false);
+    else fail();
+  }
+  let already=false;
+  try{already=sessionStorage.getItem(KEY)==='1';}catch(e){}
+  if(already){unlock(true);}
+  else{setTimeout(()=>input.focus(),350);}
+
+  submit.addEventListener('click',check);
+  input.addEventListener('keydown',e=>{if(e.key==='Enter')check();});
+  input.addEventListener('input',()=>err.classList.remove('show'));
+  input.addEventListener('focus',()=>wrap.classList.add('focus'));
+  input.addEventListener('blur',()=>wrap.classList.remove('focus'));
+  eye.addEventListener('click',()=>{
+    const show=input.type==='password';
+    input.type=show?'text':'password';
+    eye.textContent=show?'🙈':'👁';
+    input.focus();
+  });
+})();
 </script>
 </body>
 </html>
